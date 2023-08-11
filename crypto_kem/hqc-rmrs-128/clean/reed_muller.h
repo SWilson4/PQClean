@@ -1,10 +1,10 @@
-#ifndef REED_MULLER_H
-#define REED_MULLER_H
+#ifndef PQCLEAN_HQCRMRS128_CLEAN_REED_MULLER_H
+#define PQCLEAN_HQCRMRS128_CLEAN_REED_MULLER_H
 
 
 /**
  * @file reed_muller.h
- * Header file of reed_muller.c
+ * @brief Header file of reed_muller.c
  */
 #include "parameters.h"
 #include <stddef.h>

@@ -1,10 +1,10 @@
-#ifndef FFT_H
-#define FFT_H
+#ifndef PQCLEAN_HQCRMRS128_CLEAN_FFT_H
+#define PQCLEAN_HQCRMRS128_CLEAN_FFT_H
 
 
 /**
  * @file fft.h
- * Header file of fft.c
+ * @brief Header file of fft.c
  */
 
 #include <stddef.h>

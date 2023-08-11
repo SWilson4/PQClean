@@ -1,10 +1,10 @@
-#ifndef CODE_H
-#define CODE_H
+#ifndef PQCLEAN_HQCRMRS128_CLEAN_CODE_H
+#define PQCLEAN_HQCRMRS128_CLEAN_CODE_H
 
 
 /**
  * @file code.h
- * Header file of code.c
+ * @brief Header file of code.c
  */
 #include "parameters.h"
 #include <stddef.h>

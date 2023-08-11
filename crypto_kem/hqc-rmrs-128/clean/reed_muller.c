@@ -4,7 +4,7 @@
 #include <string.h>
 /**
  * @file reed_muller.c
- * Constant time implementation of Reed-Muller code RM(1,7)
+ * @brief Constant time implementation of Reed-Muller code RM(1,7)
  */
 
 
@@ -13,7 +13,7 @@
 #define MULTIPLICITY                   CEIL_DIVIDE(PARAM_N2, 128)
 
 // copy bit 0 into all bits of a 32 bit value
-#define BIT0MASK(x) (-((x) & 1))
+#define BIT0MASK(x) (uint32_t)(-((x) & 1))
 
 
 static void encode(uint8_t *word, uint8_t message);
@@ -40,6 +40,7 @@ static uint8_t find_peaks(const uint16_t transform[128]);
  * @param[out] word An RM(1,7) codeword
  * @param[in] message A message
  */
+// MODIFICATIONS HERE FORCE LITTLE-ENDIAN REPRESENTATION
 static void encode(uint8_t *word, uint8_t message) {
     uint32_t e;
     // bit 7 flips all the bits, do that first to save work
@@ -107,6 +108,7 @@ static void encode(uint8_t *word, uint8_t message) {
  * @param[out] src Structure that contain the expanded codeword
  * @param[out] dst Structure that contain the expanded codeword
  */
+// NO CHANGES NEEDED HERE
 static void hadamard(uint16_t src[128], uint16_t dst[128]) {
     // the passes move data:
     // src -> dst -> src -> dst -> src -> dst -> src -> dst
@@ -114,8 +116,8 @@ static void hadamard(uint16_t src[128], uint16_t dst[128]) {
     uint16_t *p1 = src;
     uint16_t *p2 = dst;
     uint16_t *p3;
-    for (uint32_t pass = 0; pass < 7; pass++) {
-        for (uint32_t i = 0; i < 64; i++) {
+    for (size_t pass = 0; pass < 7; ++pass) {
+        for (size_t i = 0; i < 64; ++i) {
             p2[i] = p1[2 * i] + p1[2 * i + 1];
             p2[i + 64] = p1[2 * i] - p1[2 * i + 1];
         }
@@ -125,6 +127,8 @@ static void hadamard(uint16_t src[128], uint16_t dst[128]) {
         p2 = p3;
     }
 }
+
+// REVIEWED UP TO HERE
 
 
 
@@ -142,22 +146,22 @@ static void hadamard(uint16_t src[128], uint16_t dst[128]) {
  * @param[in] src Structure that contain the codeword
  */
 static void expand_and_sum(uint16_t dest[128], const uint8_t src[16 * MULTIPLICITY]) {
-    size_t part, bit, copy;
     // start with the first copy
-    for (part = 0; part < 16; part++) {
-        for (bit = 0; bit < 8; bit++) {
-            dest[part * 8 + bit] = (uint16_t) ((src[part] >> bit) & 1);
+    for (size_t part = 0; part < 16; ++part) {
+        for (size_t bit = 0; bit < 8; ++bit) {
+            dest[part * 8 + bit] = ((src[part] >> bit) & 1);
         }
     }
     // sum the rest of the copies
-    for (copy = 1; copy < MULTIPLICITY; copy++) {
-        for (part = 0; part < 16; part++) {
-            for (bit = 0; bit < 8; bit++) {
+    for (size_t copy = 1; copy < MULTIPLICITY; ++copy) {
+        for (size_t part = 0; part < 16; ++part) {
+            for (size_t bit = 0; bit < 8; ++bit) {
                 dest[part * 8 + bit] += (uint16_t) ((src[16 * copy + part] >> bit) & 1);
             }
         }
     }
 }
+// GOOD
 
 
 
@@ -175,17 +179,18 @@ static uint8_t find_peaks(const uint16_t transform[128]) {
     uint16_t peak = 0;
     uint16_t pos = 0;
     uint16_t t, abs, mask;
-    for (uint16_t i = 0; i < 128; i++) {
+    for (uint16_t i = 0; i < 128; ++i) {
         t = transform[i];
-        abs = t ^ ((-(t >> 15)) & (t ^ -t)); // t = abs(t)
+        abs = t ^ ((uint16_t)(-(t >> 15)) & (t ^ -t)); // t = abs(t)
         mask = -(((uint16_t)(peak_abs - abs)) >> 15);
         peak ^= mask & (peak ^ t);
         pos ^= mask & (pos ^ i);
         peak_abs ^= mask & (peak_abs ^ abs);
     }
-    pos |= 128 & ((peak >> 15) - 1);
+    pos |= 128 & (uint16_t)((peak >> 15) - 1);
     return (uint8_t) pos;
 }
+// GOOD
 
 
 
@@ -200,15 +205,16 @@ static uint8_t find_peaks(const uint16_t transform[128]) {
  * @param[in] msg Array of size VEC_N1_SIZE_64 storing the message
  */
 void PQCLEAN_HQCRMRS128_CLEAN_reed_muller_encode(uint8_t *cdw, const uint8_t *msg) {
-    for (size_t i = 0; i < VEC_N1_SIZE_BYTES; i++) {
+    for (size_t i = 0; i < VEC_N1_SIZE_BYTES; ++i) {
         // encode first word
         encode(&cdw[16 * i * MULTIPLICITY], msg[i]);
         // copy to other identical codewords
-        for (size_t copy = 1; copy < MULTIPLICITY; copy++) {
+        for (size_t copy = 1; copy < MULTIPLICITY; ++copy) {
             memcpy(&cdw[16 * i * MULTIPLICITY + 16 * copy], &cdw[16 * i * MULTIPLICITY], 16);
         }
     }
 }
+// GOOD
 
 
 
@@ -224,7 +230,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_reed_muller_encode(uint8_t *cdw, const uint8_t *ms
 void PQCLEAN_HQCRMRS128_CLEAN_reed_muller_decode(uint8_t *msg, const uint8_t *cdw) {
     uint16_t expanded[128];
     uint16_t transform[128];
-    for (size_t i = 0; i < VEC_N1_SIZE_BYTES; i++) {
+    for (size_t i = 0; i < VEC_N1_SIZE_BYTES; ++i) {
         // collect the codewords
         expand_and_sum(expanded, &cdw[16 * i * MULTIPLICITY]);
         // apply hadamard transform
@@ -235,3 +241,4 @@ void PQCLEAN_HQCRMRS128_CLEAN_reed_muller_decode(uint8_t *msg, const uint8_t *cd
         msg[i] = find_peaks(transform);
     }
 }
+// GOOD

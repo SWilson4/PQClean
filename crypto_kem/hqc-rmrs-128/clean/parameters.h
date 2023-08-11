@@ -84,6 +84,8 @@
 #define PARAM_DELTA                             15
 #define PARAM_M                                 8
 #define PARAM_GF_POLY                           0x11D
+#define PARAM_GF_POLY_WT                        5
+#define PARAM_GF_POLY_M2                        4
 #define PARAM_GF_MUL_ORDER                      255
 #define PARAM_K                                 16
 #define PARAM_G                                 31

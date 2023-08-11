@@ -4,11 +4,10 @@
 #include "parsing.h"
 #include "reed_solomon.h"
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 /**
  * @file reed_solomon.c
- * Constant time implementation of Reed-Solomon codes
+ * @brief Constant time implementation of Reed-Solomon codes
  */
 
 
@@ -30,30 +29,25 @@ static void correct_errors(uint8_t *cdw, const uint16_t *error_values);
  * @param[in] msg Array of size VEC_K_SIZE_64 storing the message
  */
 void PQCLEAN_HQCRMRS128_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *msg) {
-    size_t i, j, k;
     uint8_t gate_value = 0;
 
     uint16_t tmp[PARAM_G] = {0};
     uint16_t PARAM_RS_POLY [] = {RS_POLY_COEFS};
-    uint8_t prev, x;
 
-    for (i = 0; i < PARAM_N1; ++i) {
-        cdw[i] = 0;
-    }
+    memset(cdw, 0, PARAM_N1);
 
-    for (i = 0; i < PARAM_K; ++i) {
-        gate_value = (uint8_t) (msg[PARAM_K - 1 - i] ^ cdw[PARAM_N1 - PARAM_K - 1]);
+    for (size_t i = 0; i < PARAM_K; ++i) {
+        gate_value = msg[PARAM_K - 1 - i] ^ cdw[PARAM_N1 - PARAM_K - 1];
 
-        for (j = 0; j < PARAM_G; ++j) {
+        for (size_t j = 0; j < PARAM_G; ++j) {
             tmp[j] = PQCLEAN_HQCRMRS128_CLEAN_gf_mul(gate_value, PARAM_RS_POLY[j]);
         }
 
-        prev = 0;
-        for (k = 0; k < PARAM_N1 - PARAM_K; k++) {
-            x = cdw[k];
-            cdw[k] = (uint8_t) (prev ^ tmp[k]);
-            prev = x;
+        for(size_t k = PARAM_N1 - PARAM_K - 1; k; --k) {
+            cdw_bytes[k] = cdw_bytes[k - 1] ^ tmp[k];
         }
+
+        cdw_bytes[0] = tmp[0];
     }
 
     memcpy(cdw + PARAM_N1 - PARAM_K, msg, PARAM_K);
@@ -70,7 +64,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *m
 void compute_syndromes(uint16_t *syndromes, uint8_t *cdw) {
     for (size_t i = 0; i < 2 * PARAM_DELTA; ++i) {
         for (size_t j = 1; j < PARAM_N1; ++j) {
-            syndromes[i] ^= PQCLEAN_HQCRMRS128_CLEAN_gf_mul(cdw[j], alpha_ij_pow[i][j - 1]);
+            syndromes[i] ^= PQCLEAN_HQCRMRS128_CLEAN_gf_mul(cdw[j], alpha_ij_pow[i][j-1]);
         }
         syndromes[i] ^= cdw[0];
     }
