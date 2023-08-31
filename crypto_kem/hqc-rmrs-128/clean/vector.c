@@ -73,20 +73,20 @@ void PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_fixed_weight(seedexpander_state *c
     uint32_t index_tab [PARAM_OMEGA_R] = {0};
     uint64_t bit_tab [PARAM_OMEGA_R] = {0};
     uint32_t pos, found, mask32, tmp;
-    uint64_t mask64, val, val1;
+    uint64_t mask64, val;
 
-    seedexpander(ctx, rand_bytes, 4 * weight);
+    PQCLEAN_HQCRMRS128_CLEAN_seedexpander(ctx, rand_bytes, 4 * weight);
 
     for (size_t i = 0; i < weight; ++i) {
         // force litte-endian interpretation
         support[i] = rand_bytes[4*i];
-	support[i] |= rand_bytes[4*i+1] << 8;
-	support[i] |= (uint32_t)rand_bytes[4*i+2] << 16;
-	support[i] |= (uint32_t)rand_bytes[4*i+3] << 24;
-	support[i] = i + reduce(support[i], i); // use constant-tme reduction
+        support[i] |= rand_bytes[4*i+1] << 8;
+        support[i] |= (uint32_t)rand_bytes[4*i+2] << 16;
+        support[i] |= (uint32_t)rand_bytes[4*i+3] << 24;
+        support[i] = i + reduce(support[i], i); // use constant-tme reduction
     }
 
-    for (size_t i = (weight - 1); i > 0; --i) {
+    for (size_t i = (weight - 1); i-- > 0;) {
         found = 0;
 
         for (size_t j = i + 1; j < weight; ++j) {
@@ -109,7 +109,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_fixed_weight(seedexpander_state *c
         for (size_t j = 0 ; j < weight ; ++j) {
             tmp = i - index_tab[j];
             tmp = 1 ^ ((uint32_t)(tmp | -tmp) >> 31);
-            mask64 = -tmp;
+            mask64 = -(uint64_t)tmp;
             val |= (bit_tab[j] & mask64);
         }
         v[i] |= val;
@@ -131,12 +131,30 @@ void PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_fixed_weight(seedexpander_state *c
 void PQCLEAN_HQCRMRS128_CLEAN_vect_set_random(seedexpander_state *ctx, uint64_t *v) {
     uint8_t rand_bytes[VEC_N_SIZE_BYTES] = {0};
 
-    seedexpander(ctx, rand_bytes, VEC_N_SIZE_BYTES);
+    PQCLEAN_HQCRMRS128_CLEAN_seedexpander(ctx, rand_bytes, VEC_N_SIZE_BYTES);
 
     PQCLEAN_HQCRMRS128_CLEAN_load8_arr(v, VEC_N_SIZE_64, rand_bytes, VEC_N_SIZE_BYTES);
     v[VEC_N_SIZE_64 - 1] &= RED_MASK;
 }
 // GOOD
+
+
+
+/**
+ * @brief Generates a random vector
+ *
+ * This function generates a random binary vector. It uses the the prng function.
+ *
+ * @param[in] v Pointer to an array
+ * @param[in] size_v Size of v
+ */
+void PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_from_prng(uint64_t *v, size_t size_v) {
+    uint8_t rand_bytes [32] = {0}; // set to the maximum possible size - 256 bits
+
+    PQCLEAN_HQCRMRS128_CLEAN_shake_prng(rand_bytes, size_v << 3);
+
+    PQCLEAN_HQCRMRS128_CLEAN_load8_arr(v, size_v, rand_bytes, size_v << 3);
+}
 
 
 

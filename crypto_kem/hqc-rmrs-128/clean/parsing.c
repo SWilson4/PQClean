@@ -1,7 +1,5 @@
-#include "nistseedexpander.h"
 #include "parameters.h"
 #include "parsing.h"
-#include "randombytes.h"
 #include "vector.h"
 #include <stdint.h>
 #include <string.h>
@@ -28,7 +26,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_store8(uint8_t *out, uint64_t in) {
 uint64_t PQCLEAN_HQCRMRS128_CLEAN_load8(const uint8_t *in) {
     uint64_t ret = in[7];
 
-    for (size_t i = 6; i-- > 0;) {
+    for (int8_t i = 6; i >= 0; --i) {
         ret <<= 8;
         ret |= in[i];
     }
@@ -54,7 +52,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_load8_arr(uint64_t *out64, size_t outlen, const ui
         return;
     }
     out64[index_out] = in8[inlen - 1];
-    for (size_t i = inlen - index_in - 2; i-- > 0;) {
+    for (int8_t i = (int8_t)(inlen - index_in) - 2; i >= 0; --i) {
         out64[index_out] <<= 8;
         out64[index_out] |= in8[index_in + i];
     }
@@ -104,7 +102,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_secret_key_from_string(uint64_t *x, uint64_t *
 
     memcpy(sk_seed, sk, SEED_BYTES);
     sk += SEED_BYTES;
-    seedexpander_init(&sk_seedexpander, sk_seed, SEED_BYTES);
+    PQCLEAN_HQCRMRS128_CLEAN_seedexpander_init(&sk_seedexpander, sk_seed, SEED_BYTES);
 
     PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_fixed_weight(&sk_seedexpander, x, PARAM_OMEGA);
     PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_fixed_weight(&sk_seedexpander, y, PARAM_OMEGA);
@@ -142,7 +140,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_public_key_from_string(uint64_t *h, uint64_t *
     uint8_t pk_seed[SEED_BYTES] = {0};
 
     memcpy(pk_seed, pk, SEED_BYTES);
-    seedexpander_init(&pk_seedexpander, pk_seed, SEED_BYTES);
+    PQCLEAN_HQCRMRS128_CLEAN_seedexpander_init(&pk_seedexpander, pk_seed, SEED_BYTES);
     PQCLEAN_HQCRMRS128_CLEAN_vect_set_random(&pk_seedexpander, h);
 
     PQCLEAN_HQCRMRS128_CLEAN_load8_arr(s, VEC_N_SIZE_64, pk + SEED_BYTES, VEC_N_SIZE_BYTES);

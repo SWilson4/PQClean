@@ -1,4 +1,5 @@
 #include "code.h"
+#include "fips202.h"
 #include "gf2x.h"
 #include "hqc.h"
 #include "parameters.h"
@@ -35,6 +36,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_pke_keygen(unsigned char *pk, unsigned char *s
     uint64_t s[VEC_N_SIZE_64] = {0};
 
     // Create seed_expanders for public key and secret key
+    // TODO clean up use of this interface / memory leaks
     PQCLEAN_HQCRMRS128_CLEAN_shake_prng(sk_seed, SEED_BYTES);
     PQCLEAN_HQCRMRS128_CLEAN_seedexpander_init(&sk_seedexpander, sk_seed, SEED_BYTES);
 

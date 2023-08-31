@@ -1,8 +1,6 @@
 #include "gf2x.h"
-#include "nistseedexpander.h"
 #include "parameters.h"
 #include "parsing.h"
-#include "randombytes.h"
 #include <stdint.h>
 /**
  * \file gf2x.c

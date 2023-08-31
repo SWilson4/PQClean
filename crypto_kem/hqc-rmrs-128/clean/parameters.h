@@ -93,8 +93,9 @@
 #define RS_POLY_COEFS 89,69,153,116,176,117,111,75,73,233,242,233,65,210,21,139,103,173,67,118,105,210,174,110,74,69,228,82,255,181,1
 
 #define RED_MASK                                0x1f
-#define SHA512_BYTES                            64
+#define SHAKE256_512_BYTES                    64
 #define SEED_BYTES                              40
-#define SEEDEXPANDER_MAX_LENGTH                 4294967295
+#define SALT_SIZE_BYTES                       16
+#define SALT_SIZE_64                          2
 
 #endif

@@ -44,10 +44,10 @@ void PQCLEAN_HQCRMRS128_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *m
         }
 
         for(size_t k = PARAM_N1 - PARAM_K - 1; k; --k) {
-            cdw_bytes[k] = cdw_bytes[k - 1] ^ tmp[k];
+            cdw[k] = cdw[k - 1] ^ tmp[k];
         }
 
-        cdw_bytes[0] = tmp[0];
+        cdw[0] = tmp[0];
     }
 
     memcpy(cdw + PARAM_N1 - PARAM_K, msg, PARAM_K);

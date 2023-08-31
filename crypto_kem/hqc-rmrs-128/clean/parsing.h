@@ -6,6 +6,7 @@
  * @brief Header file for parsing.c
  */
 
+#include <stddef.h>
 #include <stdint.h>
 
 void PQCLEAN_HQCRMRS128_CLEAN_store8(unsigned char *out, uint64_t in);
