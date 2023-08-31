@@ -107,6 +107,8 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_secret_key_from_string(uint64_t *x, uint64_t *
     PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_fixed_weight(&sk_seedexpander, x, PARAM_OMEGA);
     PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_fixed_weight(&sk_seedexpander, y, PARAM_OMEGA);
     memcpy(pk, sk, PUBLIC_KEY_BYTES);
+
+    PQCLEAN_HQCRMRS128_CLEAN_seedexpander_release(&sk_seedexpander);
 }
 
 /**
@@ -144,6 +146,8 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_public_key_from_string(uint64_t *h, uint64_t *
     PQCLEAN_HQCRMRS128_CLEAN_vect_set_random(&pk_seedexpander, h);
 
     PQCLEAN_HQCRMRS128_CLEAN_load8_arr(s, VEC_N_SIZE_64, pk + SEED_BYTES, VEC_N_SIZE_BYTES);
+
+    PQCLEAN_HQCRMRS128_CLEAN_seedexpander_release(&pk_seedexpander);
 }
 
 

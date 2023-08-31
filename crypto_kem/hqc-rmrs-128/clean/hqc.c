@@ -56,6 +56,8 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_pke_keygen(unsigned char *pk, unsigned char *s
     PQCLEAN_HQCRMRS128_CLEAN_hqc_public_key_to_string(pk, pk_seed, s);
     PQCLEAN_HQCRMRS128_CLEAN_hqc_secret_key_to_string(sk, sk_seed, pk);
 
+    PQCLEAN_HQCRMRS128_CLEAN_seedexpander_release(&pk_seedexpander);
+    PQCLEAN_HQCRMRS128_CLEAN_seedexpander_release(&sk_seedexpander);
 }
 
 
@@ -107,6 +109,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_pke_encrypt(uint64_t *u, uint64_t *v, uint8_t 
     PQCLEAN_HQCRMRS128_CLEAN_vect_add(tmp2, tmp1, tmp2, VEC_N_SIZE_64);
     PQCLEAN_HQCRMRS128_CLEAN_vect_resize(v, PARAM_N1N2, tmp2, PARAM_N);
 
+    PQCLEAN_HQCRMRS128_CLEAN_seedexpander_release(&seedexpander);
 }
 
 

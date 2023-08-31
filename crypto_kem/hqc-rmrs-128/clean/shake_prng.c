@@ -29,6 +29,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_shake_prng_init(const uint8_t *entropy_input, cons
     shake256_inc_absorb(&shake_prng_state, &domain, 1);
     shake256_inc_finalize(&shake_prng_state);
 }
+// SHOULD BE REPLACED BY SEEDING THE NIST RNG
 
 
 
@@ -42,10 +43,16 @@ void PQCLEAN_HQCRMRS128_CLEAN_shake_prng_init(const uint8_t *entropy_input, cons
  */
 void PQCLEAN_HQCRMRS128_CLEAN_shake_prng(uint8_t *output, size_t outlen) {
     // TODO fix workaround
-    if (!shake_prng_state.ctx) {
-        shake256_inc_init(&shake_prng_state);
-    }
+    //if (!shake_prng_state.ctx) {
+    //shake256_inc_init(&shake_prng_state);
+    //}
     shake256_inc_squeeze(output, outlen, &shake_prng_state);
+}
+// SHOULD BE REPLACED BY A PROPER RNG
+
+// workaround
+void PQCLEAN_HQCRMRS128_CLEAN_shake_prng_release() {
+    shake256_inc_ctx_release(&shake_prng_state);
 }
 
 
@@ -85,10 +92,14 @@ void PQCLEAN_HQCRMRS128_CLEAN_seedexpander(seedexpander_state *state, uint8_t *o
     uint8_t tmp[sizeof(uint64_t)];
     shake256_inc_squeeze(output, outlen - remainder, state);
     if (remainder != 0) {
-      shake256_inc_squeeze(tmp, bsize, state);
-      output += outlen - remainder;
-      for (size_t i = 0; i < remainder; ++i) {
-        output[i] = tmp[i];
-      }
+        shake256_inc_squeeze(tmp, bsize, state);
+        output += outlen - remainder;
+        for (size_t i = 0; i < remainder; ++i) {
+            output[i] = tmp[i];
+        }
     }
+}
+
+void PQCLEAN_HQCRMRS128_CLEAN_seedexpander_release(seedexpander_state *state) {
+    shake256_inc_ctx_release(state);
 }

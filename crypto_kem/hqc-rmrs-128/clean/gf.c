@@ -64,10 +64,10 @@ static uint16_t PQCLEAN_HQCRMRS128_CLEAN_gf_reduce(uint64_t x, size_t deg_x) {
 
 /**
  * Carryless multiplication of two polynomials a and b.
- * 
+ *
  * Implementation of the algorithm mul1 in https://hal.inria.fr/inria-00188261v4/document
  * with s = 2 and w = 8
- * 
+ *
  * @param[out] The polynomial c = a * b
  * @param[in] a The first polynomial
  * @param[in] b The second polynomial
@@ -83,25 +83,25 @@ static void gf_carryless_mul(uint8_t c[2], uint8_t a, uint8_t b) {
     tmp1 = a & 3;
 
     // avoid accessing array at secret index
-    for(size_t i = 0; i < 4; i++) {
-    	tmp2 = tmp1 - i;
+    for (size_t i = 0; i < 4; i++) {
+        tmp2 = tmp1 - i;
         g ^= (u[i] & (uint32_t)(-(1 - ((uint32_t)(tmp2 | -tmp2) >> 31))));
     }
 
     l = g;
     h = 0;
 
-    for (size_t i = 2; i < 8; i+=2) {
+    for (size_t i = 2; i < 8; i += 2) {
         g = 0;
         tmp1 = (a >> i) & 3;
-	// avoid accessing array at secret index
-    	for (size_t j = 0; j < 4; ++j) {
-	    tmp2 = tmp1 - j;
-        g ^= (u[j] & (uint32_t)(-(1 - ((uint32_t)(tmp2 | -tmp2) >> 31))));
-    	}
+        // avoid accessing array at secret index
+        for (size_t j = 0; j < 4; ++j) {
+            tmp2 = tmp1 - j;
+            g ^= (u[j] & (uint32_t)(-(1 - ((uint32_t)(tmp2 | -tmp2) >> 31))));
+        }
 
-    	l ^= g << i;
-    	h ^= g >> (8 - i);
+        l ^= g << i;
+        h ^= g >> (8 - i);
     }
 
     mask = (-((b >> 7) & 1));
@@ -124,7 +124,7 @@ uint16_t PQCLEAN_HQCRMRS128_CLEAN_gf_mul(uint16_t a, uint16_t b) {
     uint8_t c[2] = {0};
     gf_carryless_mul(c, (uint8_t) a, (uint8_t) b);
     uint16_t tmp = c[0] ^ (c[1] << 8);
-    return PQCLEAN_HQCRMRS128_CLEAN_gf_reduce(tmp, 2*(PARAM_M-1));
+    return PQCLEAN_HQCRMRS128_CLEAN_gf_reduce(tmp, 2 * (PARAM_M - 1));
 }
 
 
@@ -136,7 +136,7 @@ uint16_t PQCLEAN_HQCRMRS128_CLEAN_gf_mul(uint16_t a, uint16_t b) {
  */
 uint16_t PQCLEAN_HQCRMRS128_CLEAN_gf_square(uint16_t a) {
     uint32_t b = a;
-    uint32_t s = b & 1;     
+    uint32_t s = b & 1;
     for (size_t i = 1; i < PARAM_M; ++i) {
         b <<= 1;
         s ^= b & (1 << 2 * i);

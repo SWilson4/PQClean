@@ -17,11 +17,11 @@ uint32_t m_val[75] = { 243079, 243093, 243106, 243120, 243134, 243148, 243161, 2
  * Returns 1 if v1 is equal to v2 and 0 otherwise
  * https://gist.github.cppom/sneves/10845247
  *
- * @param[in] v1 
- * @param[in] v2 
+ * @param[in] v1
+ * @param[in] v2
  */
 static inline uint32_t compare_u32(uint32_t v1, uint32_t v2) {
-    return 1 ^ ((uint32_t)((v1 - v2)|(v2 - v1)) >> 31);
+    return 1 ^ ((uint32_t)((v1 - v2) | (v2 - v1)) >> 31);
 }
 // GOOD
 
@@ -32,9 +32,9 @@ static uint64_t single_bit_mask(uint32_t pos) {
 
     for (size_t i = 0; i < 64; ++i) {
         tmp = pos - i;
-	tmp = -(1 - ((uint64_t)(tmp | -tmp) >> 63));
-	ret |= mask & tmp;
-	mask <<= 1;
+        tmp = -(1 - ((uint64_t)(tmp | -tmp) >> 63));
+        ret |= mask & tmp;
+        mask <<= 1;
     }
 
     return ret;
@@ -53,7 +53,7 @@ static inline uint32_t reduce(uint32_t a, size_t i) {
     uint32_t q, n, r;
     q = ((uint64_t) a * m_val[i]) >> 32;
     n = PARAM_N - i;
-    r = a - q*n;
+    r = a - q * n;
     return cond_sub(r, n);
 }
 // GOOD
@@ -68,7 +68,7 @@ static inline uint32_t reduce(uint32_t a, size_t i) {
  * @param[in] weight Integer that is the Hamming weight
  */
 void PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_fixed_weight(seedexpander_state *ctx, uint64_t *v, uint16_t weight) {
-    uint8_t rand_bytes[4*PARAM_OMEGA_R] = {0}; // to be interpreted as PARAM_OMEGA_R 32-bit unsigned ints
+    uint8_t rand_bytes[4 * PARAM_OMEGA_R] = {0}; // to be interpreted as PARAM_OMEGA_R 32-bit unsigned ints
     uint32_t support[PARAM_OMEGA_R] = {0};
     uint32_t index_tab [PARAM_OMEGA_R] = {0};
     uint64_t bit_tab [PARAM_OMEGA_R] = {0};
@@ -79,10 +79,10 @@ void PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_fixed_weight(seedexpander_state *c
 
     for (size_t i = 0; i < weight; ++i) {
         // force litte-endian interpretation
-        support[i] = rand_bytes[4*i];
-        support[i] |= rand_bytes[4*i+1] << 8;
-        support[i] |= (uint32_t)rand_bytes[4*i+2] << 16;
-        support[i] |= (uint32_t)rand_bytes[4*i+3] << 24;
+        support[i] = rand_bytes[4 * i];
+        support[i] |= rand_bytes[4 * i + 1] << 8;
+        support[i] |= (uint32_t)rand_bytes[4 * i + 2] << 16;
+        support[i] |= (uint32_t)rand_bytes[4 * i + 3] << 24;
         support[i] = i + reduce(support[i], i); // use constant-tme reduction
     }
 

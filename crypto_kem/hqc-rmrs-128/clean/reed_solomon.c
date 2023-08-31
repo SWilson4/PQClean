@@ -43,7 +43,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *m
             tmp[j] = PQCLEAN_HQCRMRS128_CLEAN_gf_mul(gate_value, PARAM_RS_POLY[j]);
         }
 
-        for(size_t k = PARAM_N1 - PARAM_K - 1; k; --k) {
+        for (size_t k = PARAM_N1 - PARAM_K - 1; k; --k) {
             cdw[k] = cdw[k - 1] ^ tmp[k];
         }
 
@@ -64,7 +64,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *m
 void compute_syndromes(uint16_t *syndromes, uint8_t *cdw) {
     for (size_t i = 0; i < 2 * PARAM_DELTA; ++i) {
         for (size_t j = 1; j < PARAM_N1; ++j) {
-            syndromes[i] ^= PQCLEAN_HQCRMRS128_CLEAN_gf_mul(cdw[j], alpha_ij_pow[i][j-1]);
+            syndromes[i] ^= PQCLEAN_HQCRMRS128_CLEAN_gf_mul(cdw[j], alpha_ij_pow[i][j - 1]);
         }
         syndromes[i] ^= cdw[0];
     }

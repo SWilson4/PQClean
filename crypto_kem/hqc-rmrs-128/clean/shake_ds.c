@@ -31,5 +31,8 @@ void PQCLEAN_HQCRMRS128_CLEAN_shake256_512_ds(shake256incctx *state, uint8_t *ou
     shake256_inc_finalize(state);
 
     /* Squeeze output */
-    shake256_inc_squeeze(output, 512/8, state);
+    shake256_inc_squeeze(output, 512 / 8, state);
+
+    /* Release ctx */
+    shake256_inc_ctx_release(state);
 }

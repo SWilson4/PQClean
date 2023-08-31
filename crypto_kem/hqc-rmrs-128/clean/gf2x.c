@@ -18,106 +18,106 @@
  * @param[in] b The second value b
  */
 static void base_mul(uint64_t *c, uint64_t a, uint64_t b) {
-   uint64_t h = 0;
-   uint64_t l = 0;
-   uint64_t g;
-   uint64_t u[16] = {0};
-   uint64_t mask_tab[4] = {0};
-   uint64_t tmp1, tmp2;
-   
-   // Step 1
-   u[0] = 0;
-   u[1] = b & (((uint64_t)1 << (64 - 4)) - 1);
-   u[2] = u[1] << 1;
-   u[3] = u[2] ^ u[1];
-   u[4] = u[2] << 1;
-   u[5] = u[4] ^ u[1];
-   u[6] = u[3] << 1;
-   u[7] = u[6] ^ u[1];
-   u[8] = u[4] << 1;
-   u[9] = u[8] ^ u[1];
-   u[10] = u[5] << 1;
-   u[11] = u[10] ^ u[1];
-   u[12] = u[6] << 1;
-   u[13] = u[12] ^ u[1];
-   u[14] = u[7] << 1;
-   u[15] = u[14] ^ u[1];
- 
-   g=0;
-   tmp1 = a & 0x0f;
+    uint64_t h = 0;
+    uint64_t l = 0;
+    uint64_t g;
+    uint64_t u[16] = {0};
+    uint64_t mask_tab[4] = {0};
+    uint64_t tmp1, tmp2;
 
-   for(size_t i = 0; i < 16; ++i) {
-    tmp2 = tmp1 - i;
-    g ^= (u[i] & (uint64_t)(-(1 - ((uint64_t)(tmp2 | -tmp2) >> 63))));
-   }
+    // Step 1
+    u[0] = 0;
+    u[1] = b & (((uint64_t)1 << (64 - 4)) - 1);
+    u[2] = u[1] << 1;
+    u[3] = u[2] ^ u[1];
+    u[4] = u[2] << 1;
+    u[5] = u[4] ^ u[1];
+    u[6] = u[3] << 1;
+    u[7] = u[6] ^ u[1];
+    u[8] = u[4] << 1;
+    u[9] = u[8] ^ u[1];
+    u[10] = u[5] << 1;
+    u[11] = u[10] ^ u[1];
+    u[12] = u[6] << 1;
+    u[13] = u[12] ^ u[1];
+    u[14] = u[7] << 1;
+    u[15] = u[14] ^ u[1];
 
-   l = g;
-   h = 0;
+    g = 0;
+    tmp1 = a & 0x0f;
 
-   // Step 2
-   for (size_t i = 4; i < 64; i += 4) {
-      g = 0;
-      tmp1 = (a >> i) & 0x0f;
-      for (size_t j = 0; j < 16; ++j) {
-        tmp2 = tmp1 - j;
-        g ^= (u[j] & (uint64_t)(-(1 - ((uint64_t)(tmp2 | -tmp2) >> 63))));
-      }
+    for (size_t i = 0; i < 16; ++i) {
+        tmp2 = tmp1 - i;
+        g ^= (u[i] & (uint64_t)(-(1 - ((uint64_t)(tmp2 | -tmp2) >> 63))));
+    }
 
-      l ^= g << i;
-      h ^= g >> (64 - i);
-   }
+    l = g;
+    h = 0;
 
-   // Step 3
-   mask_tab [0] = - ((b >> 60) & 1);
-   mask_tab [1] = - ((b >> 61) & 1);
-   mask_tab [2] = - ((b >> 62) & 1);
-   mask_tab [3] = - ((b >> 63) & 1);
+    // Step 2
+    for (size_t i = 4; i < 64; i += 4) {
+        g = 0;
+        tmp1 = (a >> i) & 0x0f;
+        for (size_t j = 0; j < 16; ++j) {
+            tmp2 = tmp1 - j;
+            g ^= (u[j] & (uint64_t)(-(1 - ((uint64_t)(tmp2 | -tmp2) >> 63))));
+        }
 
-   l ^= ((a << 60) & mask_tab[0]);
-   h ^= ((a >> 4) & mask_tab[0]);
+        l ^= g << i;
+        h ^= g >> (64 - i);
+    }
 
-   l ^= ((a << 61) & mask_tab[1]);
-   h ^= ((a >> 3) & mask_tab[1]);
+    // Step 3
+    mask_tab [0] = - ((b >> 60) & 1);
+    mask_tab [1] = - ((b >> 61) & 1);
+    mask_tab [2] = - ((b >> 62) & 1);
+    mask_tab [3] = - ((b >> 63) & 1);
 
-   l ^= ((a << 62) & mask_tab[2]);
-   h ^= ((a >> 2) & mask_tab[2]);
+    l ^= ((a << 60) & mask_tab[0]);
+    h ^= ((a >> 4) & mask_tab[0]);
 
-   l ^= ((a << 63) & mask_tab[3]);
-   h ^= ((a >> 1) & mask_tab[3]);
+    l ^= ((a << 61) & mask_tab[1]);
+    h ^= ((a >> 3) & mask_tab[1]);
 
-   c[0] = l;
-   c[1] = h;
+    l ^= ((a << 62) & mask_tab[2]);
+    h ^= ((a >> 2) & mask_tab[2]);
+
+    l ^= ((a << 63) & mask_tab[3]);
+    h ^= ((a >> 1) & mask_tab[3]);
+
+    c[0] = l;
+    c[1] = h;
 }
 // GOOD
 
 
 
 static void karatsuba_add1(uint64_t *alh, uint64_t *blh, const uint64_t *a, const uint64_t *b, size_t size_l, size_t size_h) {
-   for (size_t i = 0; i < size_h; ++i) {
-      alh[i] = a[i] ^ a[i + size_l];
-      blh[i] = b[i] ^ b[i + size_l];
-   }
+    for (size_t i = 0; i < size_h; ++i) {
+        alh[i] = a[i] ^ a[i + size_l];
+        blh[i] = b[i] ^ b[i + size_l];
+    }
 
-   if (size_h < size_l) {
-      alh[size_h] = a[size_h];
-      blh[size_h] = b[size_h];
-   }
+    if (size_h < size_l) {
+        alh[size_h] = a[size_h];
+        blh[size_h] = b[size_h];
+    }
 }
 // GOOD
 
 
-static void karatsuba_add2(uint64_t *o, uint64_t *tmp1, uint64_t* tmp2, uint64_t size_l, uint64_t size_h) {
-   for (size_t i = 0; i < (2 * size_l) ; ++i) {
-      tmp1[i] = tmp1[i] ^ o[i];
-   }
+static void karatsuba_add2(uint64_t *o, uint64_t *tmp1, uint64_t *tmp2, uint64_t size_l, uint64_t size_h) {
+    for (size_t i = 0; i < (2 * size_l) ; ++i) {
+        tmp1[i] = tmp1[i] ^ o[i];
+    }
 
-   for (size_t i = 0; i < ( 2 * size_h); ++i) {
-      tmp1[i] = tmp1[i] ^ tmp2[i];
-   }
+    for (size_t i = 0; i < ( 2 * size_h); ++i) {
+        tmp1[i] = tmp1[i] ^ tmp2[i];
+    }
 
-   for (size_t i = 0; i <  (2 * size_l); ++i) {
-      o[i + size_l] = o[i + size_l] ^ tmp1[i];
-   }
+    for (size_t i = 0; i <  (2 * size_l); ++i) {
+        o[i + size_l] = o[i + size_l] ^ tmp1[i];
+    }
 }
 // GOOD
 
@@ -132,36 +132,36 @@ static void karatsuba_add2(uint64_t *o, uint64_t *tmp1, uint64_t* tmp2, uint64_t
  * \param[in] stack Length of polynomial
  */
 static void karatsuba(uint64_t *o, const uint64_t *a, const uint64_t *b, size_t size, uint64_t *stack) {
-   size_t size_l, size_h;
-   const uint64_t *ah, *bh;
+    size_t size_l, size_h;
+    const uint64_t *ah, *bh;
 
-   if (size == 1) {
-      base_mul(o, a[0], b[0]);
-      return;
-   }
+    if (size == 1) {
+        base_mul(o, a[0], b[0]);
+        return;
+    }
 
-   size_h = size / 2;
-   size_l = (size + 1) / 2;
+    size_h = size / 2;
+    size_l = (size + 1) / 2;
 
-   uint64_t *alh = stack;
-   uint64_t *blh = alh + size_l;
-   uint64_t *tmp1 = blh + size_l;
-   uint64_t *tmp2 = o + 2 * size_l;
-   
-   stack += 4 * size_l;
+    uint64_t *alh = stack;
+    uint64_t *blh = alh + size_l;
+    uint64_t *tmp1 = blh + size_l;
+    uint64_t *tmp2 = o + 2 * size_l;
 
-   ah = a + size_l;
-   bh = b + size_l;
+    stack += 4 * size_l;
 
-   karatsuba(o, a, b, size_l, stack);
+    ah = a + size_l;
+    bh = b + size_l;
 
-   karatsuba(tmp2, ah, bh, size_h, stack);
+    karatsuba(o, a, b, size_l, stack);
 
-   karatsuba_add1(alh, blh, a, b, size_l, size_h);
+    karatsuba(tmp2, ah, bh, size_h, stack);
 
-   karatsuba(tmp1, alh, blh, size_l, stack);
+    karatsuba_add1(alh, blh, a, b, size_l, size_h);
 
-   karatsuba_add2(o, tmp1, tmp2, size_l, size_h);
+    karatsuba(tmp1, alh, blh, size_l, stack);
+
+    karatsuba_add2(o, tmp1, tmp2, size_l, size_h);
 }
 // GOOD
 
