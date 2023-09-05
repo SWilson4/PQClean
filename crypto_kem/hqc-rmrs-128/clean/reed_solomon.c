@@ -35,6 +35,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *m
     uint16_t PARAM_RS_POLY [] = {RS_POLY_COEFS};
 
     memset(cdw, 0, PARAM_N1);
+    // should msg be stored as bytes or words?
 
     for (size_t i = 0; i < PARAM_K; ++i) {
         gate_value = msg[PARAM_K - 1 - i] ^ cdw[PARAM_N1 - PARAM_K - 1];

@@ -15,7 +15,7 @@ void PQCLEAN_HQCRMRS128_CLEAN_shake_prng_init(const uint8_t *entropy_input, cons
 
 void PQCLEAN_HQCRMRS128_CLEAN_shake_prng(uint8_t *output, size_t outlen);
 
-void PQCLEAN_HQCRMRS128_CLEAN_shake_prng_release();
+void PQCLEAN_HQCRMRS128_CLEAN_shake_prng_release(void);
 
 void PQCLEAN_HQCRMRS128_CLEAN_seedexpander_init(seedexpander_state *state, const uint8_t *seed, size_t seedlen);
 

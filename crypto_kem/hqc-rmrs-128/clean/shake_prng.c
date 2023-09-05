@@ -43,9 +43,9 @@ void PQCLEAN_HQCRMRS128_CLEAN_shake_prng_init(const uint8_t *entropy_input, cons
  */
 void PQCLEAN_HQCRMRS128_CLEAN_shake_prng(uint8_t *output, size_t outlen) {
     // TODO fix workaround
-    //if (!shake_prng_state.ctx) {
-    //shake256_inc_init(&shake_prng_state);
-    //}
+    if (!shake_prng_state.ctx) {
+        shake256_inc_init(&shake_prng_state);
+    }
     shake256_inc_squeeze(output, outlen, &shake_prng_state);
 }
 // SHOULD BE REPLACED BY A PROPER RNG

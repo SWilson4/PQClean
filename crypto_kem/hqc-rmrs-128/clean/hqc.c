@@ -4,6 +4,7 @@
 #include "hqc.h"
 #include "parameters.h"
 #include "parsing.h"
+#include "randombytes.h" // TODO: passing for PQClean
 #include "shake_prng.h"
 #include "vector.h"
 #include <stdint.h>
@@ -13,6 +14,7 @@
  */
 
 
+//#define PQCLEAN_randombytes PQCLEAN_HQCRMRS128_CLEAN_shake_prng
 
 /**
  * @brief Keygen of the HQC_PKE IND_CPA scheme
@@ -37,10 +39,12 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_pke_keygen(unsigned char *pk, unsigned char *s
 
     // Create seed_expanders for public key and secret key
     // TODO clean up use of this interface / memory leaks
-    PQCLEAN_HQCRMRS128_CLEAN_shake_prng(sk_seed, SEED_BYTES);
+    //PQCLEAN_HQCRMRS128_CLEAN_shake_prng(sk_seed, SEED_BYTES);
+    randombytes(sk_seed, SEED_BYTES);
     PQCLEAN_HQCRMRS128_CLEAN_seedexpander_init(&sk_seedexpander, sk_seed, SEED_BYTES);
 
-    PQCLEAN_HQCRMRS128_CLEAN_shake_prng(pk_seed, SEED_BYTES);
+    //PQCLEAN_HQCRMRS128_CLEAN_shake_prng(pk_seed, SEED_BYTES);
+    randombytes(pk_seed, SEED_BYTES);
     PQCLEAN_HQCRMRS128_CLEAN_seedexpander_init(&pk_seedexpander, pk_seed, SEED_BYTES);
 
     // Compute secret key
@@ -99,8 +103,8 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_pke_encrypt(uint64_t *u, uint64_t *v, uint8_t 
     PQCLEAN_HQCRMRS128_CLEAN_vect_add(u, r1, u, VEC_N_SIZE_64);
 
     // Compute v = m.G by encoding the message
-    PQCLEAN_HQCRMRS128_CLEAN_code_encode((uint8_t *)v, m);
-    PQCLEAN_HQCRMRS128_CLEAN_load8_arr(v, VEC_N1N2_SIZE_64, (uint8_t *)v, VEC_N1N2_SIZE_BYTES);
+    PQCLEAN_HQCRMRS128_CLEAN_code_encode(v, m);
+    //PQCLEAN_HQCRMRS128_CLEAN_load8_arr(v, VEC_N1N2_SIZE_64, (uint8_t *)v, VEC_N1N2_SIZE_BYTES);
     PQCLEAN_HQCRMRS128_CLEAN_vect_resize(tmp1, PARAM_N, v, PARAM_N1N2);
 
     // Compute v = m.G + s.r2 + e
@@ -139,6 +143,6 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_pke_decrypt(uint8_t *m, const uint64_t *u, con
 
 
     // Compute m by decoding v - u.y
-    PQCLEAN_HQCRMRS128_CLEAN_store8_arr((uint8_t *)tmp1, VEC_N_SIZE_BYTES, tmp2, VEC_N_SIZE_64);
-    PQCLEAN_HQCRMRS128_CLEAN_code_decode(m, (uint8_t *)tmp1);
+    //PQCLEAN_HQCRMRS128_CLEAN_store8_arr((uint8_t *)tmp1, VEC_N_SIZE_BYTES, tmp2, VEC_N_SIZE_64);
+    PQCLEAN_HQCRMRS128_CLEAN_code_decode(m, tmp2);
 }

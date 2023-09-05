@@ -161,14 +161,15 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_public_key_from_string(uint64_t *h, uint64_t *
  * @param[in] v uint64_t representation of vector v
  * @param[in] d String containing the hash d
  */
-void PQCLEAN_HQCRMRS128_CLEAN_hqc_ciphertext_to_string(uint8_t *ct, const uint64_t *u, const uint64_t *v, const uint8_t *d, const uint64_t *salt) {
+void PQCLEAN_HQCRMRS128_CLEAN_hqc_ciphertext_to_string(uint8_t *ct, const uint64_t *u, const uint64_t *v, const uint8_t *d, const uint8_t *salt) {
     PQCLEAN_HQCRMRS128_CLEAN_store8_arr(ct, VEC_N_SIZE_BYTES, u, VEC_N_SIZE_64);
     ct += VEC_N_SIZE_BYTES;
     PQCLEAN_HQCRMRS128_CLEAN_store8_arr(ct, VEC_N1N2_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
     ct += VEC_N1N2_SIZE_BYTES;
     memcpy(ct, d, SHAKE256_512_BYTES);
     ct += SHAKE256_512_BYTES;
-    PQCLEAN_HQCRMRS128_CLEAN_store8_arr(ct, SALT_SIZE_BYTES, salt, SALT_SIZE_64);
+    memcpy(ct, salt, SALT_SIZE_BYTES);
+    //PQCLEAN_HQCRMRS128_CLEAN_store8_arr(ct, SALT_SIZE_BYTES, salt, SALT_SIZE_64);
 }
 
 
@@ -182,12 +183,13 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_ciphertext_to_string(uint8_t *ct, const uint64
  * @param[out] d String containing the hash d
  * @param[in] ct String containing the ciphertext
  */
-void PQCLEAN_HQCRMRS128_CLEAN_hqc_ciphertext_from_string(uint64_t *u, uint64_t *v, uint8_t *d, uint64_t *salt, const uint8_t *ct) {
+void PQCLEAN_HQCRMRS128_CLEAN_hqc_ciphertext_from_string(uint64_t *u, uint64_t *v, uint8_t *d, uint8_t *salt, const uint8_t *ct) {
     PQCLEAN_HQCRMRS128_CLEAN_load8_arr(u, VEC_N_SIZE_64, ct, VEC_N_SIZE_BYTES);
     ct += VEC_N_SIZE_BYTES;
     PQCLEAN_HQCRMRS128_CLEAN_load8_arr(v, VEC_N1N2_SIZE_64, ct, VEC_N1N2_SIZE_BYTES);
     ct += VEC_N1N2_SIZE_BYTES;
     memcpy(d, ct, SHAKE256_512_BYTES);
     ct += SHAKE256_512_BYTES;
-    PQCLEAN_HQCRMRS128_CLEAN_load8_arr(salt, SALT_SIZE_64, ct, SALT_SIZE_BYTES);
+    memcpy(salt, ct, SALT_SIZE_BYTES);
+    //PQCLEAN_HQCRMRS128_CLEAN_load8_arr(salt, SALT_SIZE_64, ct, SALT_SIZE_BYTES);
 }

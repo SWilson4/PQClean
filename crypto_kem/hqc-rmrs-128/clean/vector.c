@@ -1,5 +1,6 @@
 #include "parameters.h"
 #include "parsing.h"
+#include "randombytes.h"
 #include "shake_prng.h"
 #include "vector.h"
 #include <stdint.h>
@@ -9,7 +10,9 @@
  * @brief Implementation of vectors sampling and some utilities for the HQC scheme
  */
 
-uint32_t m_val[75] = { 243079, 243093, 243106, 243120, 243134, 243148, 243161, 243175, 243189, 243203, 243216, 243230, 243244, 243258, 243272, 243285, 243299, 243313, 243327, 243340, 243354, 243368, 243382, 243396, 243409, 243423, 243437, 243451, 243465, 243478, 243492, 243506, 243520, 243534, 243547, 243561, 243575, 243589, 243603, 243616, 243630, 243644, 243658, 243672, 243686, 243699, 243713, 243727, 243741, 243755, 243769, 243782, 243796, 243810, 243824, 243838, 243852, 243865, 243879, 243893, 243907, 243921, 243935, 243949, 243962, 243976, 243990, 244004, 244018, 244032, 244046, 244059, 244073, 244087, 244101 };
+//#define PQCLEAN_randombytes PQCLEAN_HQCRMRS128_CLEAN_shake_prng
+
+static uint32_t m_val[75] = { 243079, 243093, 243106, 243120, 243134, 243148, 243161, 243175, 243189, 243203, 243216, 243230, 243244, 243258, 243272, 243285, 243299, 243313, 243327, 243340, 243354, 243368, 243382, 243396, 243409, 243423, 243437, 243451, 243465, 243478, 243492, 243506, 243520, 243534, 243547, 243561, 243575, 243589, 243603, 243616, 243630, 243644, 243658, 243672, 243686, 243699, 243713, 243727, 243741, 243755, 243769, 243782, 243796, 243810, 243824, 243838, 243852, 243865, 243879, 243893, 243907, 243921, 243935, 243949, 243962, 243976, 243990, 244004, 244018, 244032, 244046, 244059, 244073, 244087, 244101 };
 
 /**
  * @brief Constant-time comparison of two integers v1 and v2
@@ -151,7 +154,8 @@ void PQCLEAN_HQCRMRS128_CLEAN_vect_set_random(seedexpander_state *ctx, uint64_t 
 void PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_from_prng(uint64_t *v, size_t size_v) {
     uint8_t rand_bytes [32] = {0}; // set to the maximum possible size - 256 bits
 
-    PQCLEAN_HQCRMRS128_CLEAN_shake_prng(rand_bytes, size_v << 3);
+    randombytes(rand_bytes, size_v << 3);
+    //PQCLEAN_HQCRMRS128_CLEAN_shake_prng(rand_bytes, size_v << 3);
 
     PQCLEAN_HQCRMRS128_CLEAN_load8_arr(v, size_v, rand_bytes, size_v << 3);
 }

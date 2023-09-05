@@ -26,9 +26,9 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_public_key_to_string(uint8_t *pk, const uint8_
 
 void PQCLEAN_HQCRMRS128_CLEAN_hqc_public_key_from_string(uint64_t *h, uint64_t *s, const uint8_t *pk);
 
-void PQCLEAN_HQCRMRS128_CLEAN_hqc_ciphertext_to_string(uint8_t *ct, const uint64_t *u, const uint64_t *v, const uint8_t *d, const uint64_t *salt);
+void PQCLEAN_HQCRMRS128_CLEAN_hqc_ciphertext_to_string(uint8_t *ct, const uint64_t *u, const uint64_t *v, const uint8_t *d, const uint8_t *salt);
 
-void PQCLEAN_HQCRMRS128_CLEAN_hqc_ciphertext_from_string(uint64_t *u, uint64_t *v, uint8_t *d, uint64_t *salt, const uint8_t *ct);
+void PQCLEAN_HQCRMRS128_CLEAN_hqc_ciphertext_from_string(uint64_t *u, uint64_t *v, uint8_t *d, uint8_t *salt, const uint8_t *ct);
 
 
 #endif

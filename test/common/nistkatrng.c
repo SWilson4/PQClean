@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include "aes.h"
+#include "fips202.h"
 #include "randombytes.h"
 
 typedef struct {
@@ -18,25 +19,31 @@ typedef struct {
     int reseed_counter;
 } AES256_CTR_DRBG_struct;
 
-static AES256_CTR_DRBG_struct DRBG_ctx;
-static void AES256_CTR_DRBG_Update(const uint8_t *provided_data, uint8_t *Key, uint8_t *V);
+//static AES256_CTR_DRBG_struct DRBG_ctx;
+static shake256incctx shake_prng_state; // ADDED FOR TESTING
+//static void AES256_CTR_DRBG_Update(const uint8_t *provided_data, uint8_t *Key, uint8_t *V);
 
 // Use whatever AES implementation you have. This uses AES from openSSL library
 //    key - 256-bit AES key
 //    ctr - a 128-bit plaintext value
 //    buffer - a 128-bit ciphertext value
+/*
 static void AES256_ECB(uint8_t *key, uint8_t *ctr, uint8_t *buffer) {
     aes256ctx ctx;
     aes256_ecb_keyexp(&ctx, key);
     aes256_ecb(buffer, ctr, 1, &ctx);
     aes256_ctx_release(&ctx);
 }
+*/
 
 void nist_kat_init(uint8_t *entropy_input, const uint8_t *personalization_string, int security_strength);
 void nist_kat_init(uint8_t *entropy_input, const uint8_t *personalization_string, int security_strength) {
+        /*
     uint8_t seed_material[48];
 
+    */
     assert(security_strength == 256);
+    /*
     memcpy(seed_material, entropy_input, 48);
     if (personalization_string) {
         for (int i = 0; i < 48; i++) {
@@ -48,8 +55,18 @@ void nist_kat_init(uint8_t *entropy_input, const uint8_t *personalization_string
     AES256_CTR_DRBG_Update(seed_material, DRBG_ctx.Key, DRBG_ctx.V);
     DRBG_ctx.reseed_counter = 1;
 }
+void PQCLEAN_HQCRMRS128_CLEAN_shake_prng_init(const uint8_t *entropy_input, const uint8_t *personalization_string, size_t enlen, size_t perlen) {
+*/
+    uint8_t domain = 1/*PRNG_DOMAIN*/;
+    shake256_inc_init(&shake_prng_state);
+    shake256_inc_absorb(&shake_prng_state, entropy_input, 48/*enlen*/);
+    shake256_inc_absorb(&shake_prng_state, personalization_string, 0/*perlen*/);
+    shake256_inc_absorb(&shake_prng_state, &domain, 1);
+    shake256_inc_finalize(&shake_prng_state);
+}
 
 int randombytes(uint8_t *buf, size_t n) {
+        /*
     uint8_t block[16];
     int i = 0;
 
@@ -77,7 +94,13 @@ int randombytes(uint8_t *buf, size_t n) {
     DRBG_ctx.reseed_counter++;
     return 0;
 }
+void PQCLEAN_HQCRMRS128_CLEAN_shake_prng(uint8_t *output, size_t outlen) {
+*/
+    shake256_inc_squeeze(buf/*output*/, n/*outlen*/, &shake_prng_state);
+    return 0; // ADDED FOR TESTING
+}
 
+/*
 static void AES256_CTR_DRBG_Update(const uint8_t *provided_data, uint8_t *Key, uint8_t *V) {
     uint8_t temp[48];
 
@@ -102,3 +125,4 @@ static void AES256_CTR_DRBG_Update(const uint8_t *provided_data, uint8_t *Key, u
     memcpy(Key, temp, 32);
     memcpy(V, temp + 32, 16);
 }
+*/

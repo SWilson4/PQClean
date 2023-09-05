@@ -10,9 +10,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-void PQCLEAN_HQCRMRS128_CLEAN_reed_muller_encode(uint8_t *cdw, const uint8_t *msg);
+void PQCLEAN_HQCRMRS128_CLEAN_reed_muller_encode(uint64_t *cdw, const uint8_t *msg);
 
-void PQCLEAN_HQCRMRS128_CLEAN_reed_muller_decode(uint8_t *msg, const uint8_t *cdw);
+void PQCLEAN_HQCRMRS128_CLEAN_reed_muller_decode(uint8_t *msg, const uint64_t *cdw);
 
 
 #endif

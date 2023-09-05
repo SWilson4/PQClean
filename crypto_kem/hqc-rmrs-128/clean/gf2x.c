@@ -106,7 +106,7 @@ static void karatsuba_add1(uint64_t *alh, uint64_t *blh, const uint64_t *a, cons
 // GOOD
 
 
-static void karatsuba_add2(uint64_t *o, uint64_t *tmp1, uint64_t *tmp2, uint64_t size_l, uint64_t size_h) {
+static void karatsuba_add2(uint64_t *o, uint64_t *tmp1, uint64_t *tmp2, size_t size_l, size_t size_h) {
     for (size_t i = 0; i < (2 * size_l) ; ++i) {
         tmp1[i] = tmp1[i] ^ o[i];
     }
