@@ -104,7 +104,6 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_pke_encrypt(uint64_t *u, uint64_t *v, uint8_t 
 
     // Compute v = m.G by encoding the message
     PQCLEAN_HQCRMRS128_CLEAN_code_encode(v, m);
-    //PQCLEAN_HQCRMRS128_CLEAN_load8_arr(v, VEC_N1N2_SIZE_64, (uint8_t *)v, VEC_N1N2_SIZE_BYTES);
     PQCLEAN_HQCRMRS128_CLEAN_vect_resize(tmp1, PARAM_N, v, PARAM_N1N2);
 
     // Compute v = m.G + s.r2 + e
@@ -143,6 +142,5 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_pke_decrypt(uint8_t *m, const uint64_t *u, con
 
 
     // Compute m by decoding v - u.y
-    //PQCLEAN_HQCRMRS128_CLEAN_store8_arr((uint8_t *)tmp1, VEC_N_SIZE_BYTES, tmp2, VEC_N_SIZE_64);
     PQCLEAN_HQCRMRS128_CLEAN_code_decode(m, tmp2);
 }

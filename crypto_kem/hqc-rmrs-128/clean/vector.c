@@ -144,25 +144,6 @@ void PQCLEAN_HQCRMRS128_CLEAN_vect_set_random(seedexpander_state *ctx, uint64_t 
 
 
 /**
- * @brief Generates a random vector
- *
- * This function generates a random binary vector. It uses the the prng function.
- *
- * @param[in] v Pointer to an array
- * @param[in] size_v Size of v
- */
-void PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_from_prng(uint64_t *v, size_t size_v) {
-    uint8_t rand_bytes [32] = {0}; // set to the maximum possible size - 256 bits
-
-    randombytes(rand_bytes, size_v << 3);
-    //PQCLEAN_HQCRMRS128_CLEAN_shake_prng(rand_bytes, size_v << 3);
-
-    PQCLEAN_HQCRMRS128_CLEAN_load8_arr(v, size_v, rand_bytes, size_v << 3);
-}
-
-
-
-/**
  * @brief Adds two vectors
  *
  * @param[out] o Pointer to an array that is the result

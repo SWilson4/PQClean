@@ -98,11 +98,9 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_secret_key_to_string(uint8_t *sk, const uint8_
  */
 void PQCLEAN_HQCRMRS128_CLEAN_hqc_secret_key_from_string(uint64_t *x, uint64_t *y, uint8_t *pk, const uint8_t *sk) {
     seedexpander_state sk_seedexpander;
-    uint8_t sk_seed[SEED_BYTES] = {0};
 
-    memcpy(sk_seed, sk, SEED_BYTES);
+    PQCLEAN_HQCRMRS128_CLEAN_seedexpander_init(&sk_seedexpander, sk, SEED_BYTES);
     sk += SEED_BYTES;
-    PQCLEAN_HQCRMRS128_CLEAN_seedexpander_init(&sk_seedexpander, sk_seed, SEED_BYTES);
 
     PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_fixed_weight(&sk_seedexpander, x, PARAM_OMEGA);
     PQCLEAN_HQCRMRS128_CLEAN_vect_set_random_fixed_weight(&sk_seedexpander, y, PARAM_OMEGA);
@@ -139,10 +137,8 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_public_key_to_string(uint8_t *pk, const uint8_
  */
 void PQCLEAN_HQCRMRS128_CLEAN_hqc_public_key_from_string(uint64_t *h, uint64_t *s, const uint8_t *pk) {
     seedexpander_state pk_seedexpander;
-    uint8_t pk_seed[SEED_BYTES] = {0};
 
-    memcpy(pk_seed, pk, SEED_BYTES);
-    PQCLEAN_HQCRMRS128_CLEAN_seedexpander_init(&pk_seedexpander, pk_seed, SEED_BYTES);
+    PQCLEAN_HQCRMRS128_CLEAN_seedexpander_init(&pk_seedexpander, pk, SEED_BYTES);
     PQCLEAN_HQCRMRS128_CLEAN_vect_set_random(&pk_seedexpander, h);
 
     PQCLEAN_HQCRMRS128_CLEAN_load8_arr(s, VEC_N_SIZE_64, pk + SEED_BYTES, VEC_N_SIZE_BYTES);
@@ -169,7 +165,6 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_ciphertext_to_string(uint8_t *ct, const uint64
     memcpy(ct, d, SHAKE256_512_BYTES);
     ct += SHAKE256_512_BYTES;
     memcpy(ct, salt, SALT_SIZE_BYTES);
-    //PQCLEAN_HQCRMRS128_CLEAN_store8_arr(ct, SALT_SIZE_BYTES, salt, SALT_SIZE_64);
 }
 
 
@@ -191,5 +186,4 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_ciphertext_from_string(uint64_t *u, uint64_t *
     memcpy(d, ct, SHAKE256_512_BYTES);
     ct += SHAKE256_512_BYTES;
     memcpy(salt, ct, SALT_SIZE_BYTES);
-    //PQCLEAN_HQCRMRS128_CLEAN_load8_arr(salt, SALT_SIZE_64, ct, SALT_SIZE_BYTES);
 }
