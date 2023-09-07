@@ -1,5 +1,5 @@
-#ifndef HQC_PARAMETERS_H
-#define HQC_PARAMETERS_H
+#ifndef PQCLEAN_HQCRMRS192_CLEAN_HQC_PARAMETERS_H
+#define PQCLEAN_HQCRMRS192_CLEAN_HQC_PARAMETERS_H
 
 
 /**
@@ -84,6 +84,8 @@
 #define PARAM_DELTA                             16
 #define PARAM_M                                 8
 #define PARAM_GF_POLY                           0x11D
+#define PARAM_GF_POLY_WT                      5
+#define PARAM_GF_POLY_M2                        4
 #define PARAM_GF_MUL_ORDER                      255
 #define PARAM_K                                 24
 #define PARAM_G                                 33
@@ -91,8 +93,9 @@
 #define RS_POLY_COEFS 45,216,239,24,253,104,27,40,107,50,163,210,227,134,224,158,119,13,158,1,238,164,82,43,15,232,246,142,50,189,29,232,1
 
 #define RED_MASK                                0x7ff
-#define SHA512_BYTES                            64
+#define SHAKE256_512_BYTES                      64
 #define SEED_BYTES                              40
-#define SEEDEXPANDER_MAX_LENGTH                 4294967295
+#define SALT_SIZE_BYTES                       16
+#define SALT_SIZE_64                          2
 
 #endif
