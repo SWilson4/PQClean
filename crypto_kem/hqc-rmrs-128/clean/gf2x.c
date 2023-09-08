@@ -106,7 +106,7 @@ static void karatsuba_add1(uint64_t *alh, uint64_t *blh, const uint64_t *a, cons
 // GOOD
 
 
-static void karatsuba_add2(uint64_t *o, uint64_t *tmp1, uint64_t *tmp2, size_t size_l, size_t size_h) {
+static void karatsuba_add2(uint64_t *o, uint64_t *tmp1, const uint64_t *tmp2, size_t size_l, size_t size_h) {
     for (size_t i = 0; i < (2 * size_l) ; ++i) {
         tmp1[i] = tmp1[i] ^ o[i];
     }
@@ -193,18 +193,18 @@ static void reduce(uint64_t *o, const uint64_t *a) {
 /**
  * @brief Multiply two polynomials modulo \f$ X^n - 1\f$.
  *
- * This functions multiplies polynomials <b>a1</b> and <b>a2</b>.
+ * This functions multiplies polynomials <b>v1</b> and <b>v2</b>.
  * The multiplication is done modulo \f$ X^n - 1\f$.
  *
- * \param[out] o Product of <b>a1</b> and <b>a2</b>
- * \param[in] a1 Pointer to the first polynomial
- * \param[in] a2 Pointer to the second polynomial
+ * \param[out] o Product of <b>v1</b> and <b>v2</b>
+ * \param[in] v1 Pointer to the first polynomial
+ * \param[in] v2 Pointer to the second polynomial
  */
-void PQCLEAN_HQCRMRS128_CLEAN_vect_mul(uint64_t *o, const uint64_t *a1, const uint64_t *a2) {
+void PQCLEAN_HQCRMRS128_CLEAN_vect_mul(uint64_t *o, const uint64_t *v1, const uint64_t *v2) {
     uint64_t stack[VEC_N_SIZE_64 << 3] = {0};
     uint64_t o_karat[VEC_N_SIZE_64 << 1] = {0};
 
-    karatsuba(o_karat, a1, a2, VEC_N_SIZE_64, stack);
+    karatsuba(o_karat, v1, v2, VEC_N_SIZE_64, stack);
     reduce(o, o_karat);
 }
 // GOOD

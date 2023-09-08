@@ -106,7 +106,6 @@ void PQCLEAN_HQCRMRS192_CLEAN_vect_set_random_fixed_weight(seedexpander_state *c
         bit_tab[i] = single_bit_mask(pos); // avoid secret shift
     }
 
-    val = 0;
     for (size_t i = 0; i < VEC_N_SIZE_64; ++i) {
         val = 0;
         for (size_t j = 0 ; j < weight ; ++j) {
