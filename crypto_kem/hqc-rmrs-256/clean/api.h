@@ -12,7 +12,7 @@
 #define PQCLEAN_HQCRMRS256_CLEAN_CRYPTO_SECRETKEYBYTES               7285
 #define PQCLEAN_HQCRMRS256_CLEAN_CRYPTO_PUBLICKEYBYTES               7245
 #define PQCLEAN_HQCRMRS256_CLEAN_CRYPTO_BYTES                        64
-#define PQCLEAN_HQCRMRS256_CLEAN_CRYPTO_CIPHERTEXTBYTES              14469
+#define PQCLEAN_HQCRMRS256_CLEAN_CRYPTO_CIPHERTEXTBYTES              14485
 
 // As a technicality, the public key is appended to the secret key in order to respect the NIST API.
 // Without this constraint, PQCLEAN_HQCRMRS256_CLEAN_CRYPTO_SECRETKEYBYTES would be defined as 32
