@@ -15,8 +15,6 @@
  * @brief Implementation of api.h
  */
 
-
-
 /**
  * @brief Keygen of the HQC_KEM IND_CAA2 scheme
  *
@@ -34,8 +32,6 @@ int PQCLEAN_HQCRMRS256_CLEAN_crypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
     PQCLEAN_HQCRMRS256_CLEAN_hqc_pke_keygen(pk, sk);
     return 0;
 }
-
-
 
 /**
  * @brief Encapsulation of the HQC_KEM IND_CAA2 scheme
@@ -60,7 +56,6 @@ int PQCLEAN_HQCRMRS256_CLEAN_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint
     // Computing m
     randombytes(m, VEC_K_SIZE_BYTES);
 
-
     // Computing theta
     randombytes(salt, SALT_SIZE_BYTES);
     memcpy(tmp + VEC_K_SIZE_BYTES, pk, SEED_BYTES);
@@ -81,11 +76,8 @@ int PQCLEAN_HQCRMRS256_CLEAN_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint
     // Computing ciphertext
     PQCLEAN_HQCRMRS256_CLEAN_hqc_ciphertext_to_string(ct, u, v, d, salt);
 
-
     return 0;
 }
-
-
 
 /**
  * @brief Decapsulation of the HQC_KEM IND_CAA2 scheme
@@ -141,7 +133,6 @@ int PQCLEAN_HQCRMRS256_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, cons
     for (size_t i = 0; i < SHARED_SECRET_BYTES; ++i) {
         ss[i] &= ~result;
     }
-
 
     return -(result & 1);
 }

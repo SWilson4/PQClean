@@ -15,5 +15,4 @@ void PQCLEAN_HQCRMRS192_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *m
 
 void PQCLEAN_HQCRMRS192_CLEAN_reed_solomon_decode(uint8_t *msg, uint8_t *cdw);
 
-
 #endif

@@ -1,5 +1,6 @@
 #ifndef PQCLEAN_HQCRMRS256_CLEAN_API_H
 #define PQCLEAN_HQCRMRS256_CLEAN_API_H
+
 /**
  * @file api.h
  * @brief NIST KEM API used by the HQC_KEM IND-CCA2 scheme
@@ -22,6 +23,5 @@ int PQCLEAN_HQCRMRS256_CLEAN_crypto_kem_keypair(uint8_t *pk, uint8_t *sk);
 int PQCLEAN_HQCRMRS256_CLEAN_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint8_t *pk);
 
 int PQCLEAN_HQCRMRS256_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, const uint8_t *sk);
-
 
 #endif

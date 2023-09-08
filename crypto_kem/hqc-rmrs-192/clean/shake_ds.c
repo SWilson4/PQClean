@@ -4,8 +4,6 @@
  * @brief Implementation SHAKE-256 with incremental API and domain separation
  */
 
-
-
 /**
  * @brief SHAKE-256 with incremental API and domain separation
  *

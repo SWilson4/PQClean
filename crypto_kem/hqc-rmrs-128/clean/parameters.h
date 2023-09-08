@@ -1,13 +1,12 @@
-#ifndef HQC_PARAMETERS_H
-#define HQC_PARAMETERS_H
-
+#ifndef PQCLEAN_HQCRMRS128_CLEAN_PARAMETERS_H
+#define PQCLEAN_HQCRMRS128_CLEAN_PARAMETERS_H
 
 /**
  * @file parameters.h
  * @brief Parameters of the HQC_KEM IND-CCA2 scheme
  */
-#include "api.h"
 
+#include "api.h"
 
 #define CEIL_DIVIDE(a, b)  (((a)+(b)-1)/(b)) /*!< Divide a by b and ceil the result*/
 

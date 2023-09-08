@@ -20,5 +20,4 @@ uint8_t PQCLEAN_HQCRMRS256_CLEAN_vect_compare(const uint8_t *v1, const uint8_t *
 
 void PQCLEAN_HQCRMRS256_CLEAN_vect_resize(uint64_t *o, uint32_t size_o, const uint64_t *v, uint32_t size_v);
 
-
 #endif

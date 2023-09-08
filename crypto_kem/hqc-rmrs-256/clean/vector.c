@@ -113,8 +113,6 @@ void PQCLEAN_HQCRMRS256_CLEAN_vect_set_random_fixed_weight(seedexpander_state *c
     }
 }
 
-
-
 /**
  * @brief Generates a random vector of dimension <b>PARAM_N</b>
  *
@@ -133,8 +131,6 @@ void PQCLEAN_HQCRMRS256_CLEAN_vect_set_random(seedexpander_state *ctx, uint64_t 
     v[VEC_N_SIZE_64 - 1] &= RED_MASK;
 }
 
-
-
 /**
  * @brief Adds two vectors
  *
@@ -148,8 +144,6 @@ void PQCLEAN_HQCRMRS256_CLEAN_vect_add(uint64_t *o, const uint64_t *v1, const ui
         o[i] = v1[i] ^ v2[i];
     }
 }
-
-
 
 /**
  * @brief Compares two vectors
@@ -166,8 +160,6 @@ uint8_t PQCLEAN_HQCRMRS256_CLEAN_vect_compare(const uint8_t *v1, const uint8_t *
     }
     return (r - 1) >> 8;
 }
-
-
 
 /**
  * @brief Resize a vector so that it contains <b>size_o</b> bits

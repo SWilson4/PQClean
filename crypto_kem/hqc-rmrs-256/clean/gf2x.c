@@ -89,8 +89,6 @@ static void base_mul(uint64_t *c, uint64_t a, uint64_t b) {
     c[1] = h;
 }
 
-
-
 static void karatsuba_add1(uint64_t *alh, uint64_t *blh, const uint64_t *a, const uint64_t *b, size_t size_l, size_t size_h) {
     for (size_t i = 0; i < size_h; ++i) {
         alh[i] = a[i] ^ a[i + size_l];
@@ -102,7 +100,6 @@ static void karatsuba_add1(uint64_t *alh, uint64_t *blh, const uint64_t *a, cons
         blh[size_h] = b[size_h];
     }
 }
-
 
 static void karatsuba_add2(uint64_t *o, uint64_t *tmp1, const uint64_t *tmp2, size_t size_l, size_t size_h) {
     for (size_t i = 0; i < (2 * size_l) ; ++i) {
@@ -118,7 +115,6 @@ static void karatsuba_add2(uint64_t *o, uint64_t *tmp1, const uint64_t *tmp2, si
     }
 }
 // GOOD
-
 
 /**
  * Karatsuba multiplication of a and b, Implementation inspired from the NTL library.
@@ -163,7 +159,6 @@ static void karatsuba(uint64_t *o, const uint64_t *a, const uint64_t *b, size_t 
 }
 // GOOD
 
-
 /**
  * @brief Compute o(x) = a(x) mod \f$ X^n - 1\f$
  *
@@ -184,8 +179,6 @@ static void reduce(uint64_t *o, const uint64_t *a) {
 
     o[VEC_N_SIZE_64 - 1] &= RED_MASK;
 }
-
-
 
 /**
  * @brief Multiply two polynomials modulo \f$ X^n - 1\f$.

@@ -6,7 +6,6 @@
  * @brief Galois field implementation with multiplication using the pclmulqdq instruction
  */
 
-
 /**
  * @brief Computes the number of trailing zero bits.
  *
@@ -23,8 +22,6 @@ static uint16_t trailing_zero_bits_count(uint16_t a) { // ENDIANNESS OK
     return tmp;
 }
 
-
-
 /**
  * Reduces polynomial x modulo primitive polynomial GF_POLY.
  * @returns x mod GF_POLY
@@ -34,7 +31,6 @@ static uint16_t trailing_zero_bits_count(uint16_t a) { // ENDIANNESS OK
 static uint16_t PQCLEAN_HQCRMRS192_CLEAN_gf_reduce(uint64_t x, size_t deg_x) {
     uint16_t z1, z2, rmdr, dist;
     uint64_t mod;
-
 
     // Deduce the number of steps of reduction
     size_t steps = CEIL_DIVIDE(deg_x - (PARAM_M - 1), PARAM_GF_POLY_M2);
@@ -59,8 +55,6 @@ static uint16_t PQCLEAN_HQCRMRS192_CLEAN_gf_reduce(uint64_t x, size_t deg_x) {
 
     return x;
 }
-
-
 
 /**
  * Carryless multiplication of two polynomials a and b.
@@ -112,8 +106,6 @@ static void gf_carryless_mul(uint8_t c[2], uint8_t a, uint8_t b) {
     c[1] = h;
 }
 
-
-
 /**
  * Multiplies two elements of GF(2^GF_M).
  * @returns the product a*b
@@ -126,8 +118,6 @@ uint16_t PQCLEAN_HQCRMRS192_CLEAN_gf_mul(uint16_t a, uint16_t b) {
     uint16_t tmp = c[0] ^ (c[1] << 8);
     return PQCLEAN_HQCRMRS192_CLEAN_gf_reduce(tmp, 2 * (PARAM_M - 1));
 }
-
-
 
 /**
  * @brief Squares an element of GF(2^PARAM_M).
@@ -144,8 +134,6 @@ uint16_t PQCLEAN_HQCRMRS192_CLEAN_gf_square(uint16_t a) {
 
     return PQCLEAN_HQCRMRS192_CLEAN_gf_reduce(s, 2 * (PARAM_M - 1));
 }
-
-
 
 /**
  * @brief Computes the inverse of an element of GF(2^PARAM_M),

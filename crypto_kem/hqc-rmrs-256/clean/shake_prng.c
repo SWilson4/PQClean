@@ -9,7 +9,6 @@
 
 shake256incctx shake_prng_state;
 
-
 /**
  * @brief SHAKE-256 with incremental API and domain separation
  *
@@ -29,8 +28,6 @@ void PQCLEAN_HQCRMRS256_CLEAN_shake_prng_init(const uint8_t *entropy_input, cons
     shake256_inc_finalize(&shake_prng_state);
 }
 // SHOULD BE REPLACED BY SEEDING THE NIST RNG
-
-
 
 /**
  * @brief A SHAKE-256 based PRNG
@@ -54,8 +51,6 @@ void PQCLEAN_HQCRMRS256_CLEAN_shake_prng_release() {
     shake256_inc_ctx_release(&shake_prng_state);
 }
 
-
-
 /**
  * @brief Initialiase a SHAKE-256 based seedexpander
  *
@@ -72,8 +67,6 @@ void PQCLEAN_HQCRMRS256_CLEAN_seedexpander_init(seedexpander_state *state, const
     shake256_inc_absorb(state, &domain, 1);
     shake256_inc_finalize(state);
 }
-
-
 
 /**
  * @brief A SHAKE-256 based seedexpander
