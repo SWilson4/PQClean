@@ -1,10 +1,10 @@
-#ifndef GF_H
-#define GF_H
+#ifndef PQCLEAN_HQCRMRS256_CLEAN_GF_H
+#define PQCLEAN_HQCRMRS256_CLEAN_GF_H
 
 
 /**
  * @file gf.h
- * Header file of gf.c
+ * @brief Header file of gf.c
  */
 
 #include <stddef.h>
@@ -32,8 +32,6 @@ uint16_t PQCLEAN_HQCRMRS256_CLEAN_gf_mul(uint16_t a, uint16_t b);
 uint16_t PQCLEAN_HQCRMRS256_CLEAN_gf_square(uint16_t a);
 
 uint16_t PQCLEAN_HQCRMRS256_CLEAN_gf_inverse(uint16_t a);
-
-uint16_t PQCLEAN_HQCRMRS256_CLEAN_gf_mod(uint16_t i);
 
 
 #endif

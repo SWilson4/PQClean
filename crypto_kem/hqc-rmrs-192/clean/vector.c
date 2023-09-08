@@ -18,7 +18,7 @@ static uint32_t m_val[114] = { 119800, 119803, 119807, 119810, 119813, 119817, 1
  * @brief Constant-time comparison of two integers v1 and v2
  *
  * Returns 1 if v1 is equal to v2 and 0 otherwise
- * https://gist.github.cppom/sneves/10845247
+ * https://gist.github.com/sneves/10845247
  *
  * @param[in] v1
  * @param[in] v2

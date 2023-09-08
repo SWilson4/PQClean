@@ -1,5 +1,5 @@
-#ifndef HQC_H
-#define HQC_H
+#ifndef PQCLEAN_HQCRMRS256_CLEAN_HQC_H
+#define PQCLEAN_HQCRMRS256_CLEAN_HQC_H
 
 
 /**

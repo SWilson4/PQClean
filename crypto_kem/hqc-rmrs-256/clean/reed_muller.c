@@ -4,7 +4,7 @@
 #include <string.h>
 /**
  * @file reed_muller.c
- * Constant time implementation of Reed-Muller code RM(1,7)
+ * @brief Constant time implementation of Reed-Muller code RM(1,7)
  */
 
 
@@ -13,13 +13,8 @@
 #define MULTIPLICITY                   CEIL_DIVIDE(PARAM_N2, 128)
 
 // copy bit 0 into all bits of a 32 bit value
-#define BIT0MASK(x) (-((x) & 1))
+#define BIT0MASK(x) (uint32_t)(-((x) & 1))
 
-
-static void encode(uint8_t *word, uint8_t message);
-static void hadamard(uint16_t src[128], uint16_t dst[128]);
-static void expand_and_sum(uint16_t dest[128], const uint8_t src[16 * MULTIPLICITY]);
-static uint8_t find_peaks(const uint16_t transform[128]);
 
 
 
@@ -40,7 +35,7 @@ static uint8_t find_peaks(const uint16_t transform[128]);
  * @param[out] word An RM(1,7) codeword
  * @param[in] message A message
  */
-static void encode(uint8_t *word, uint8_t message) {
+static void encode(uint64_t *cword, uint8_t message) {
     uint32_t e;
     // bit 7 flips all the bits, do that first to save work
     e = BIT0MASK(message >> 7);
@@ -52,26 +47,14 @@ static void encode(uint8_t *word, uint8_t message) {
     e ^= BIT0MASK(message >> 3) & 0xff00ff00;
     e ^= BIT0MASK(message >> 4) & 0xffff0000;
     // we can store this in the first quarter
-    word[0 + 0] = (e >> 0x00) & 0xff;
-    word[0 + 1] = (e >> 0x08) & 0xff;
-    word[0 + 2] = (e >> 0x10) & 0xff;
-    word[0 + 3] = (e >> 0x18) & 0xff;
+    cword[0] = e;
     // bit 5 flips entries 1 and 3; bit 6 flips 2 and 3
     e ^= BIT0MASK(message >> 5);
-    word[4 + 0] = (e >> 0x00) & 0xff;
-    word[4 + 1] = (e >> 0x08) & 0xff;
-    word[4 + 2] = (e >> 0x10) & 0xff;
-    word[4 + 3] = (e >> 0x18) & 0xff;
+    cword[0] |= (uint64_t)e << 32;
     e ^= BIT0MASK(message >> 6);
-    word[12 + 0] = (e >> 0x00) & 0xff;
-    word[12 + 1] = (e >> 0x08) & 0xff;
-    word[12 + 2] = (e >> 0x10) & 0xff;
-    word[12 + 3] = (e >> 0x18) & 0xff;
+    cword[1] = (uint64_t)e << 32;
     e ^= BIT0MASK(message >> 5);
-    word[8 + 0] = (e >> 0x00) & 0xff;
-    word[8 + 1] = (e >> 0x08) & 0xff;
-    word[8 + 2] = (e >> 0x10) & 0xff;
-    word[8 + 3] = (e >> 0x18) & 0xff;
+    cword[1] |= e;
 }
 
 
@@ -107,15 +90,15 @@ static void encode(uint8_t *word, uint8_t message) {
  * @param[out] src Structure that contain the expanded codeword
  * @param[out] dst Structure that contain the expanded codeword
  */
-static void hadamard(uint16_t src[128], uint16_t dst[128]) {
+static void hadamard(uint16_t src[256], uint16_t dst[256]) {
     // the passes move data:
     // src -> dst -> src -> dst -> src -> dst -> src -> dst
     // using p1 and p2 alternately
     uint16_t *p1 = src;
     uint16_t *p2 = dst;
     uint16_t *p3;
-    for (uint32_t pass = 0; pass < 7; pass++) {
-        for (uint32_t i = 0; i < 64; i++) {
+    for (size_t pass = 0; pass < 7; ++pass) {
+        for (size_t i = 0; i < 64; ++i) {
             p2[i] = p1[2 * i] + p1[2 * i + 1];
             p2[i + 64] = p1[2 * i] - p1[2 * i + 1];
         }
@@ -141,19 +124,18 @@ static void hadamard(uint16_t src[128], uint16_t dst[128]) {
  * @param[out] dest Structure that contain the expanded codeword
  * @param[in] src Structure that contain the codeword
  */
-static void expand_and_sum(uint16_t dest[128], const uint8_t src[16 * MULTIPLICITY]) {
-    size_t part, bit, copy;
+static void expand_and_sum(uint16_t dest[128], const uint64_t src[2 * MULTIPLICITY]) {
     // start with the first copy
-    for (part = 0; part < 16; part++) {
-        for (bit = 0; bit < 8; bit++) {
-            dest[part * 8 + bit] = (uint16_t) ((src[part] >> bit) & 1);
+    for (size_t part = 0; part < 2; ++part) {
+        for (size_t bit = 0; bit < 64; ++bit) {
+            dest[part * 64 + bit] = ((src[part] >> bit) & 1);
         }
     }
     // sum the rest of the copies
-    for (copy = 1; copy < MULTIPLICITY; copy++) {
-        for (part = 0; part < 16; part++) {
-            for (bit = 0; bit < 8; bit++) {
-                dest[part * 8 + bit] += (uint16_t) ((src[16 * copy + part] >> bit) & 1);
+    for (size_t copy = 1; copy < MULTIPLICITY; ++copy) {
+        for (size_t part = 0; part < 2; ++part) {
+            for (size_t bit = 0; bit < 64; ++bit) {
+                dest[part * 64 + bit] += (uint16_t) ((src[2 * copy + part] >> bit) & 1);
             }
         }
     }
@@ -199,13 +181,12 @@ static uint8_t find_peaks(const uint16_t transform[128]) {
  * @param[out] cdw Array of size VEC_N1N2_SIZE_64 receiving the encoded message
  * @param[in] msg Array of size VEC_N1_SIZE_64 storing the message
  */
-void PQCLEAN_HQCRMRS256_CLEAN_reed_muller_encode(uint8_t *cdw, const uint8_t *msg) {
-    for (size_t i = 0; i < VEC_N1_SIZE_BYTES; i++) {
+void PQCLEAN_HQCRMRS256_CLEAN_reed_muller_encode(uint64_t *cdw, const uint8_t *msg) {
+    for (size_t i = 0; i < VEC_N1_SIZE_BYTES; ++i) {
         // encode first word
-        encode(&cdw[16 * i * MULTIPLICITY], msg[i]);
-        // copy to other identical codewords
-        for (size_t copy = 1; copy < MULTIPLICITY; copy++) {
-            memcpy(&cdw[16 * i * MULTIPLICITY + 16 * copy], &cdw[16 * i * MULTIPLICITY], 16);
+        encode(&cdw[2 * i * MULTIPLICITY], msg[i]);
+        for (size_t copy = 1; copy < MULTIPLICITY; ++copy) {
+            memcpy(&cdw[2 * i * MULTIPLICITY + 2 * copy], &cdw[2 * i * MULTIPLICITY], 16);
         }
     }
 }
@@ -221,12 +202,12 @@ void PQCLEAN_HQCRMRS256_CLEAN_reed_muller_encode(uint8_t *cdw, const uint8_t *ms
  * @param[out] msg Array of size VEC_N1_SIZE_64 receiving the decoded message
  * @param[in] cdw Array of size VEC_N1N2_SIZE_64 storing the received word
  */
-void PQCLEAN_HQCRMRS256_CLEAN_reed_muller_decode(uint8_t *msg, const uint8_t *cdw) {
-    uint16_t expanded[128];
-    uint16_t transform[128];
-    for (size_t i = 0; i < VEC_N1_SIZE_BYTES; i++) {
+void PQCLEAN_HQCRMRS256_CLEAN_reed_muller_decode(uint8_t *msg, const uint64_t *cdw) {
+    uint16_t expanded[256];
+    uint16_t transform[256];
+    for (size_t i = 0; i < VEC_N1_SIZE_BYTES; ++i) {
         // collect the codewords
-        expand_and_sum(expanded, &cdw[16 * i * MULTIPLICITY]);
+        expand_and_sum(expanded, &cdw[2 * i * MULTIPLICITY]);
         // apply hadamard transform
         hadamard(expanded, transform);
         // fix the first entry to get the half Hadamard transform

@@ -84,6 +84,8 @@
 #define PARAM_DELTA                             29
 #define PARAM_M                                 8
 #define PARAM_GF_POLY                           0x11D
+#define PARAM_GF_POLY_WT                      5
+#define PARAM_GF_POLY_M2                        4
 #define PARAM_GF_MUL_ORDER                      255
 #define PARAM_K                                 32
 #define PARAM_G                                 59
@@ -91,8 +93,9 @@
 #define RS_POLY_COEFS 49,167,49,39,200,121,124,91,240,63,148,71,150,123,87,101,32,215,159,71,201,115,97,210,186,183,141,217,123,12,31,243,180,219,152,239,99,141,4,246,191,144,8,232,47,27,141,178,130,64,124,47,39,188,216,48,199,187,1
 
 #define RED_MASK                                0x1fffffffff
-#define SHA512_BYTES                            64
+#define SHAKE256_512_BYTES                            64
 #define SEED_BYTES                              40
-#define SEEDEXPANDER_MAX_LENGTH                 4294967295
+#define SALT_SIZE_BYTES                       16
+#define SALT_SIZE_64                          2
 
 #endif
