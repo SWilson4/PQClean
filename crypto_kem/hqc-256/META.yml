@@ -2,11 +2,11 @@ name: HQC-256
 type: kem
 claimed-nist-level: 5
 claimed-security: IND-CCA2
-length-ciphertext: 14485
+length-ciphertext: 14421
 length-public-key: 7245
-length-secret-key: 7285
+length-secret-key: 7317
 length-shared-secret: 64
-nistkat-sha256: 1ab129ea5073cb933ffe70d77379f96dd869a9f816eab1a4a5165287942f20a7
+nistkat-sha256: e89c520e1ac615ecf6923f211569177c536a89bf94bebf85bb263528282092c4
 principal-submitters:
   - Carlos Aguilar Melchor
   - Nicolas Aragon
