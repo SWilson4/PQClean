@@ -1,5 +1,5 @@
-#ifndef PQCLEAN_HQC256_CLEANGF2X_H
-#define PQCLEAN_HQC256_CLEANGF2X_H
+#ifndef PQCLEAN_HQC256_CLEAN_GF2X_H
+#define PQCLEAN_HQC256_CLEAN_GF2X_H
 
 /**
  * @file gf2x.h
@@ -8,6 +8,6 @@
 
 #include <stdint.h>
 
-void PQCLEAN_HQC256_CLEANvect_mul(uint64_t *o, const uint64_t *v1, const uint64_t *v2);
+void PQCLEAN_HQC256_CLEAN_vect_mul(uint64_t *o, const uint64_t *v1, const uint64_t *v2);
 
 #endif

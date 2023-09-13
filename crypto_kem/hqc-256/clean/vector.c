@@ -65,7 +65,7 @@ static inline uint32_t reduce(uint32_t a, size_t i) {
  * @param[in] v Pointer to an array
  * @param[in] weight Integer that is the Hamming weight
  */
-void PQCLEAN_HQC256_CLEANvect_set_random_fixed_weight(seedexpander_state *ctx, uint64_t *v, uint16_t weight) {
+void PQCLEAN_HQC256_CLEAN_vect_set_random_fixed_weight(seedexpander_state *ctx, uint64_t *v, uint16_t weight) {
     uint8_t rand_bytes[4 * PARAM_OMEGA_R] = {0}; // to be interpreted as PARAM_OMEGA_R 32-bit unsigned ints
     uint32_t support[PARAM_OMEGA_R] = {0};
     uint32_t index_tab [PARAM_OMEGA_R] = {0};
@@ -73,7 +73,7 @@ void PQCLEAN_HQC256_CLEANvect_set_random_fixed_weight(seedexpander_state *ctx, u
     uint32_t pos, found, mask32, tmp;
     uint64_t mask64, val;
 
-    PQCLEAN_HQC256_CLEANseedexpander(ctx, rand_bytes, 4 * weight);
+    PQCLEAN_HQC256_CLEAN_seedexpander(ctx, rand_bytes, 4 * weight);
 
     for (size_t i = 0; i < weight; ++i) {
         // force litte-endian interpretation
@@ -122,12 +122,12 @@ void PQCLEAN_HQC256_CLEANvect_set_random_fixed_weight(seedexpander_state *ctx, u
  * @param[in] v Pointer to an array
  * @param[in] ctx Pointer to the context of the seed expander
  */
-void PQCLEAN_HQC256_CLEANvect_set_random(seedexpander_state *ctx, uint64_t *v) {
+void PQCLEAN_HQC256_CLEAN_vect_set_random(seedexpander_state *ctx, uint64_t *v) {
     uint8_t rand_bytes[VEC_N_SIZE_BYTES] = {0};
 
-    PQCLEAN_HQC256_CLEANseedexpander(ctx, rand_bytes, VEC_N_SIZE_BYTES);
+    PQCLEAN_HQC256_CLEAN_seedexpander(ctx, rand_bytes, VEC_N_SIZE_BYTES);
 
-    PQCLEAN_HQC256_CLEANload8_arr(v, VEC_N_SIZE_64, rand_bytes, VEC_N_SIZE_BYTES);
+    PQCLEAN_HQC256_CLEAN_load8_arr(v, VEC_N_SIZE_64, rand_bytes, VEC_N_SIZE_BYTES);
     v[VEC_N_SIZE_64 - 1] &= RED_MASK;
 }
 
@@ -139,7 +139,7 @@ void PQCLEAN_HQC256_CLEANvect_set_random(seedexpander_state *ctx, uint64_t *v) {
  * @param[in] v2 Pointer to an array that is the second vector
  * @param[in] size Integer that is the size of the vectors
  */
-void PQCLEAN_HQC256_CLEANvect_add(uint64_t *o, const uint64_t *v1, const uint64_t *v2, size_t size) {
+void PQCLEAN_HQC256_CLEAN_vect_add(uint64_t *o, const uint64_t *v1, const uint64_t *v2, size_t size) {
     for (size_t i = 0; i < size; ++i) {
         o[i] = v1[i] ^ v2[i];
     }
@@ -153,7 +153,7 @@ void PQCLEAN_HQC256_CLEANvect_add(uint64_t *o, const uint64_t *v1, const uint64_
  * @param[in] size Integer that is the size of the vectors
  * @returns 0 if the vectors are equal and 1 otherwise
  */
-uint8_t PQCLEAN_HQC256_CLEANvect_compare(const uint8_t *v1, const uint8_t *v2, size_t size) {
+uint8_t PQCLEAN_HQC256_CLEAN_vect_compare(const uint8_t *v1, const uint8_t *v2, size_t size) {
     uint16_t r = 0x0100;
     for (size_t i = 0; i < size; i++) {
         r |= v1[i] ^ v2[i];
@@ -169,7 +169,7 @@ uint8_t PQCLEAN_HQC256_CLEANvect_compare(const uint8_t *v1, const uint8_t *v2, s
  * @param[in] v Pointer to the input vector
  * @param[in] size_v Integer that is the size of the input vector in bits
  */
-void PQCLEAN_HQC256_CLEANvect_resize(uint64_t *o, uint32_t size_o, const uint64_t *v, uint32_t size_v) {
+void PQCLEAN_HQC256_CLEAN_vect_resize(uint64_t *o, uint32_t size_o, const uint64_t *v, uint32_t size_v) {
     uint64_t mask = 0x7FFFFFFFFFFFFFFF;
     size_t val = 0;
     if (size_o < size_v) {

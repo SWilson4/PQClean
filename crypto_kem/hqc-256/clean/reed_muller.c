@@ -146,9 +146,9 @@ static uint8_t find_peaks(const uint16_t transform[128]) {
     uint16_t peak = 0;
     uint16_t pos = 0;
     uint16_t t, abs, mask;
-    for (uint16_t i = 0; i < 128; i++) {
+    for (uint16_t i = 0; i < 128; ++i) {
         t = transform[i];
-        abs = t ^ ((-(t >> 15)) & (t ^ -t)); // t = abs(t)
+        abs = t ^ ((uint16_t)(-(t >> 15)) & (t ^ -t)); // t = abs(t)
         mask = -(((uint16_t)(peak_abs - abs)) >> 15);
         peak ^= mask & (peak ^ t);
         pos ^= mask & (pos ^ i);
@@ -167,7 +167,7 @@ static uint8_t find_peaks(const uint16_t transform[128]) {
  * @param[out] cdw Array of size VEC_N1N2_SIZE_64 receiving the encoded message
  * @param[in] msg Array of size VEC_N1_SIZE_64 storing the message
  */
-void PQCLEAN_HQC256_CLEANreed_muller_encode(uint64_t *cdw, const uint8_t *msg) {
+void PQCLEAN_HQC256_CLEAN_reed_muller_encode(uint64_t *cdw, const uint8_t *msg) {
     for (size_t i = 0; i < VEC_N1_SIZE_BYTES; ++i) {
         // encode first word
         encode(&cdw[2 * i * MULTIPLICITY], msg[i]);
@@ -186,7 +186,7 @@ void PQCLEAN_HQC256_CLEANreed_muller_encode(uint64_t *cdw, const uint8_t *msg) {
  * @param[out] msg Array of size VEC_N1_SIZE_64 receiving the decoded message
  * @param[in] cdw Array of size VEC_N1N2_SIZE_64 storing the received word
  */
-void PQCLEAN_HQC256_CLEANreed_muller_decode(uint8_t *msg, const uint64_t *cdw) {
+void PQCLEAN_HQC256_CLEAN_reed_muller_decode(uint8_t *msg, const uint64_t *cdw) {
     uint16_t expanded[256];
     uint16_t transform[256];
     for (size_t i = 0; i < VEC_N1_SIZE_BYTES; ++i) {

@@ -19,7 +19,7 @@ shake256incctx shake_prng_state;
  * @param[in] enlen Length of entropy string in bytes
  * @param[in] perlen Length of the personalization string in bytes
  */
-void PQCLEAN_HQC256_CLEANshake_prng_init(const uint8_t *entropy_input, const uint8_t *personalization_string, size_t enlen, size_t perlen) {
+void PQCLEAN_HQC256_CLEAN_shake_prng_init(const uint8_t *entropy_input, const uint8_t *personalization_string, size_t enlen, size_t perlen) {
     uint8_t domain = PRNG_DOMAIN;
     shake256_inc_init(&shake_prng_state);
     shake256_inc_absorb(&shake_prng_state, entropy_input, enlen);
@@ -37,17 +37,13 @@ void PQCLEAN_HQC256_CLEANshake_prng_init(const uint8_t *entropy_input, const uin
  * @param[out] output Pointer to output
  * @param[in] outlen length of output in bytes
  */
-void PQCLEAN_HQC256_CLEANshake_prng(uint8_t *output, size_t outlen) {
-    // TODO fix workaround
-    if (!shake_prng_state.ctx) {
-        shake256_inc_init(&shake_prng_state);
-    }
+void PQCLEAN_HQC256_CLEAN_shake_prng(uint8_t *output, size_t outlen) {
     shake256_inc_squeeze(output, outlen, &shake_prng_state);
 }
 // SHOULD BE REPLACED BY A PROPER RNG
 
 // workaround
-void PQCLEAN_HQC256_CLEANshake_prng_release() {
+void PQCLEAN_HQC256_CLEAN_shake_prng_release() {
     shake256_inc_ctx_release(&shake_prng_state);
 }
 
@@ -60,7 +56,7 @@ void PQCLEAN_HQC256_CLEANshake_prng_release() {
  * @param[in] seed A seed
  * @param[in] seedlen The seed bytes length
  */
-void PQCLEAN_HQC256_CLEANseedexpander_init(seedexpander_state *state, const uint8_t *seed, size_t seedlen) {
+void PQCLEAN_HQC256_CLEAN_seedexpander_init(seedexpander_state *state, const uint8_t *seed, size_t seedlen) {
     uint8_t domain = SEEDEXPANDER_DOMAIN;
     shake256_inc_init(state);
     shake256_inc_absorb(state, seed, seedlen);
@@ -78,7 +74,7 @@ void PQCLEAN_HQC256_CLEANseedexpander_init(seedexpander_state *state, const uint
  * @param[out] output The XOF data
  * @param[in] outlen Number of bytes to return
  */
-void PQCLEAN_HQC256_CLEANseedexpander(seedexpander_state *state, uint8_t *output, size_t outlen) {
+void PQCLEAN_HQC256_CLEAN_seedexpander(seedexpander_state *state, uint8_t *output, size_t outlen) {
     const size_t bsize = sizeof(uint64_t);
     const size_t remainder = outlen % bsize;
     uint8_t tmp[sizeof(uint64_t)];
@@ -92,6 +88,6 @@ void PQCLEAN_HQC256_CLEANseedexpander(seedexpander_state *state, uint8_t *output
     }
 }
 
-void PQCLEAN_HQC256_CLEANseedexpander_release(seedexpander_state *state) {
+void PQCLEAN_HQC256_CLEAN_seedexpander_release(seedexpander_state *state) {
     shake256_inc_ctx_release(state);
 }
