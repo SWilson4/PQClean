@@ -13,8 +13,6 @@
  * @brief Implementation of hqc.h
  */
 
-//#define PQCLEAN_randombytes PQCLEAN_HQC128_CLEAN_shake_prng
-
 /**
  * @brief Keygen of the HQC_PKE IND_CPA scheme
  *
@@ -121,7 +119,7 @@ void PQCLEAN_HQC128_CLEAN_hqc_pke_encrypt(uint64_t *u, uint64_t *v, uint8_t *m, 
  * @param[in] u Vector u (first part of the ciphertext)
  * @param[in] v Vector v (second part of the ciphertext)
  * @param[in] sk String containing the secret key
- * @returns 0 
+ * @returns 0
  */
 uint8_t PQCLEAN_HQC128_CLEAN_hqc_pke_decrypt(uint8_t *m, uint8_t *sigma, const uint64_t *u, const uint64_t *v, const uint8_t *sk) {
     uint64_t x[VEC_N_SIZE_64] = {0};
