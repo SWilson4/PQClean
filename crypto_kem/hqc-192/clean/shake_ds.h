@@ -1,5 +1,5 @@
-#ifndef PQCLEAN_HQC192_CLEANSHAKE_DS_H
-#define PQCLEAN_HQC192_CLEANSHAKE_DS_H
+#ifndef PQCLEAN_HQC192_CLEAN_SHAKE_DS_H
+#define PQCLEAN_HQC192_CLEAN_SHAKE_DS_H
 
 /**
  * @file shake_ds.h
@@ -10,6 +10,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-void PQCLEAN_HQC192_CLEANshake256_512_ds(shake256incctx *state, uint8_t *output, const uint8_t *input, size_t inlen, uint8_t domain);
+void PQCLEAN_HQC192_CLEAN_shake256_512_ds(shake256incctx *state, uint8_t *output, const uint8_t *input, size_t inlen, uint8_t domain);
 
 #endif

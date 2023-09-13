@@ -27,9 +27,9 @@
  * @param[out] sk String containing the secret key
  * @returns 0 if keygen is successful
  */
-int PQCLEAN_HQC192_CLEANcrypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
+int PQCLEAN_HQC192_CLEAN_crypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
 
-    PQCLEAN_HQC192_CLEANhqc_pke_keygen(pk, sk);
+    PQCLEAN_HQC192_CLEAN_hqc_pke_keygen(pk, sk);
     return 0;
 }
 
@@ -41,16 +41,15 @@ int PQCLEAN_HQC192_CLEANcrypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
  * @param[in] pk String containing the public key
  * @returns 0 if encapsulation is successful
  */
-int PQCLEAN_HQC192_CLEANcrypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint8_t *pk) {
+int PQCLEAN_HQC192_CLEAN_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint8_t *pk) {
 
     uint8_t theta[SHAKE256_512_BYTES] = {0};
     uint64_t u[VEC_N_SIZE_64] = {0};
     uint64_t v[VEC_N1N2_SIZE_64] = {0};
-    uint8_t d[SHAKE256_512_BYTES] = {0};
     uint8_t mc[VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES] = {0};
-    uint8_t tmp[VEC_K_SIZE_BYTES + SEED_BYTES + SALT_SIZE_BYTES] = {0};
+    uint8_t tmp[VEC_K_SIZE_BYTES + PUBLIC_KEY_BYTES + SALT_SIZE_BYTES] = {0};
     uint8_t *m = tmp;
-    uint8_t *salt = tmp + VEC_K_SIZE_BYTES + SEED_BYTES;
+    uint8_t *salt = tmp + VEC_K_SIZE_BYTES + PUBLIC_KEY_BYTES;
     shake256incctx shake256state;
 
     // Computing m
@@ -58,23 +57,20 @@ int PQCLEAN_HQC192_CLEANcrypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint8_t *
 
     // Computing theta
     randombytes(salt, SALT_SIZE_BYTES);
-    memcpy(tmp + VEC_K_SIZE_BYTES, pk, SEED_BYTES);
-    PQCLEAN_HQC192_CLEANshake256_512_ds(&shake256state, theta, tmp, VEC_K_SIZE_BYTES + SEED_BYTES + SALT_SIZE_BYTES, G_FCT_DOMAIN);
+    memcpy(tmp + VEC_K_SIZE_BYTES, pk, PUBLIC_KEY_BYTES);
+    PQCLEAN_HQC192_CLEAN_shake256_512_ds(&shake256state, theta, tmp, VEC_K_SIZE_BYTES + PUBLIC_KEY_BYTES + SALT_SIZE_BYTES, G_FCT_DOMAIN);
 
     // Encrypting m
-    PQCLEAN_HQC192_CLEANhqc_pke_encrypt(u, v, m, theta, pk);
-
-    // Computing d
-    PQCLEAN_HQC192_CLEANshake256_512_ds(&shake256state, d, m, VEC_K_SIZE_BYTES, H_FCT_DOMAIN);
+    PQCLEAN_HQC192_CLEAN_hqc_pke_encrypt(u, v, m, theta, pk);
 
     // Computing shared secret
     memcpy(mc, m, VEC_K_SIZE_BYTES);
-    PQCLEAN_HQC192_CLEANstore8_arr(mc + VEC_K_SIZE_BYTES, VEC_N_SIZE_BYTES, u, VEC_N_SIZE_64);
-    PQCLEAN_HQC192_CLEANstore8_arr(mc + VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES, VEC_N1N2_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
-    PQCLEAN_HQC192_CLEANshake256_512_ds(&shake256state, ss, mc, VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES, K_FCT_DOMAIN);
+    PQCLEAN_HQC192_CLEAN_store8_arr(mc + VEC_K_SIZE_BYTES, VEC_N_SIZE_BYTES, u, VEC_N_SIZE_64);
+    PQCLEAN_HQC192_CLEAN_store8_arr(mc + VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES, VEC_N1N2_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
+    PQCLEAN_HQC192_CLEAN_shake256_512_ds(&shake256state, ss, mc, VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES, K_FCT_DOMAIN);
 
     // Computing ciphertext
-    PQCLEAN_HQC192_CLEANhqc_ciphertext_to_string(ct, u, v, d, salt);
+    PQCLEAN_HQC192_CLEAN_hqc_ciphertext_to_string(ct, u, v, salt);
 
     return 0;
 }
@@ -87,52 +83,48 @@ int PQCLEAN_HQC192_CLEANcrypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint8_t *
  * @param[in] sk String containing the secret key
  * @returns 0 if decapsulation is successful, -1 otherwise
  */
-int PQCLEAN_HQC192_CLEANcrypto_kem_dec(uint8_t *ss, const uint8_t *ct, const uint8_t *sk) {
+int PQCLEAN_HQC192_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, const uint8_t *sk) {
     uint8_t result;
     uint64_t u[VEC_N_SIZE_64] = {0};
     uint64_t v[VEC_N1N2_SIZE_64] = {0};
-    uint8_t d[SHAKE256_512_BYTES] = {0};
     const uint8_t *pk = sk + SEED_BYTES;
+    uint8_t sigma[VEC_K_SIZE_BYTES] = {0};
     uint8_t theta[SHAKE256_512_BYTES] = {0};
     uint64_t u2[VEC_N_SIZE_64] = {0};
     uint64_t v2[VEC_N1N2_SIZE_64] = {0};
-    uint8_t d2[SHAKE256_512_BYTES] = {0};
     uint8_t mc[VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES] = {0};
-    uint8_t tmp[VEC_K_SIZE_BYTES + SEED_BYTES + SALT_SIZE_BYTES] = {0};
+    uint8_t tmp[VEC_K_SIZE_BYTES + PUBLIC_KEY_BYTES + SALT_SIZE_BYTES] = {0};
     uint8_t *m = tmp;
-    uint8_t *salt = tmp + VEC_K_SIZE_BYTES + SEED_BYTES;
+    uint8_t *salt = tmp + VEC_K_SIZE_BYTES + PUBLIC_KEY_BYTES;
     shake256incctx shake256state;
 
     // Retrieving u, v and d from ciphertext
-    PQCLEAN_HQC192_CLEANhqc_ciphertext_from_string(u, v, d, salt, ct);
+    PQCLEAN_HQC192_CLEAN_hqc_ciphertext_from_string(u, v, salt, ct);
 
-    // Decryting
-    PQCLEAN_HQC192_CLEANhqc_pke_decrypt(m, u, v, sk);
+    // Decrypting
+    result = PQCLEAN_HQC192_CLEAN_hqc_pke_decrypt(m, sigma, u, v, sk);
 
     // Computing theta
-    memcpy(tmp + VEC_K_SIZE_BYTES, pk, SEED_BYTES);
-    PQCLEAN_HQC192_CLEANshake256_512_ds(&shake256state, theta, tmp, VEC_K_SIZE_BYTES + SEED_BYTES + SALT_SIZE_BYTES, G_FCT_DOMAIN);
+    memcpy(tmp + VEC_K_SIZE_BYTES, pk, PUBLIC_KEY_BYTES);
+    PQCLEAN_HQC192_CLEAN_shake256_512_ds(&shake256state, theta, tmp, VEC_K_SIZE_BYTES + PUBLIC_KEY_BYTES + SALT_SIZE_BYTES, G_FCT_DOMAIN);
 
     // Encrypting m'
-    PQCLEAN_HQC192_CLEANhqc_pke_encrypt(u2, v2, m, theta, pk);
+    PQCLEAN_HQC192_CLEAN_hqc_pke_encrypt(u2, v2, m, theta, pk);
 
-    // Computing d'
-    PQCLEAN_HQC192_CLEANshake256_512_ds(&shake256state, d2, m, VEC_K_SIZE_BYTES, H_FCT_DOMAIN);
+    // Check if c != c'
+    result |= PQCLEAN_HQC192_CLEAN_vect_compare((uint8_t *)u, (uint8_t *)u2, VEC_N_SIZE_BYTES);
+    result |= PQCLEAN_HQC192_CLEAN_vect_compare((uint8_t *)v, (uint8_t *)v2, VEC_N1N2_SIZE_BYTES);
 
-    // Computing shared secret
-    memcpy(mc, m, VEC_K_SIZE_BYTES);
-    PQCLEAN_HQC192_CLEANstore8_arr(mc + VEC_K_SIZE_BYTES, VEC_N_SIZE_BYTES, u, VEC_N_SIZE_64);
-    PQCLEAN_HQC192_CLEANstore8_arr(mc + VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES, VEC_N1N2_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
-    PQCLEAN_HQC192_CLEANshake256_512_ds(&shake256state, ss, mc, VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES, K_FCT_DOMAIN);
-
-    // Abort if c != c' or d != d'
-    result = PQCLEAN_HQC192_CLEANvect_compare((uint8_t *)u, (uint8_t *)u2, VEC_N_SIZE_BYTES);
-    result |= PQCLEAN_HQC192_CLEANvect_compare((uint8_t *)v, (uint8_t *)v2, VEC_N1N2_SIZE_BYTES);
-    result |= PQCLEAN_HQC192_CLEANvect_compare(d, d2, SHAKE256_512_BYTES);
     result = (uint8_t) (-((int16_t) result) >> 15);
-    for (size_t i = 0; i < SHARED_SECRET_BYTES; ++i) {
-        ss[i] &= ~result;
+
+    for (size_t i = 0; i < VEC_K_SIZE_BYTES; ++i) {
+        mc[i] = (m[i] & result) ^ (sigma[i] & ~result);
     }
 
-    return -(result & 1);
+    // Computing shared secret
+    PQCLEAN_HQC192_CLEAN_store8_arr(mc + VEC_K_SIZE_BYTES, VEC_N_SIZE_BYTES, u, VEC_N_SIZE_64);
+    PQCLEAN_HQC192_CLEAN_store8_arr(mc + VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES, VEC_N1N2_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
+    PQCLEAN_HQC192_CLEAN_shake256_512_ds(&shake256state, ss, mc, VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES, K_FCT_DOMAIN);
+
+    return -(~result & 1);
 }

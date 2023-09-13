@@ -1,5 +1,5 @@
-#ifndef PQCLEAN_HQC192_CLEANCODE_H
-#define PQCLEAN_HQC192_CLEANCODE_H
+#ifndef PQCLEAN_HQC192_CLEAN_CODE_H
+#define PQCLEAN_HQC192_CLEAN_CODE_H
 
 /**
  * @file code.h
@@ -9,8 +9,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-void PQCLEAN_HQC192_CLEANcode_encode(uint64_t *em, const uint8_t *message);
+void PQCLEAN_HQC192_CLEAN_code_encode(uint64_t *em, const uint8_t *message);
 
-void PQCLEAN_HQC192_CLEANcode_decode(uint8_t *m, const uint64_t *em);
+void PQCLEAN_HQC192_CLEAN_code_decode(uint8_t *m, const uint64_t *em);
 
 #endif

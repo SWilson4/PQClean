@@ -103,7 +103,7 @@ int PQCLEAN_HQC128_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, const ui
     // Retrieving u, v and d from ciphertext
     PQCLEAN_HQC128_CLEAN_hqc_ciphertext_from_string(u, v, salt, ct);
 
-    // Decryting
+    // Decrypting
     result = PQCLEAN_HQC128_CLEAN_hqc_pke_decrypt(m, sigma, u, v, sk);
 
     // Computing theta

@@ -28,7 +28,7 @@ static uint16_t trailing_zero_bits_count(uint16_t a) { // ENDIANNESS OK
  * @param[in] x Polynomial of degree less than 64
  * @param[in] deg_x The degree of polynomial x
  */
-static uint16_t PQCLEAN_HQC192_CLEANgf_reduce(uint64_t x, size_t deg_x) {
+static uint16_t PQCLEAN_HQC192_CLEAN_gf_reduce(uint64_t x, size_t deg_x) {
     uint16_t z1, z2, rmdr, dist;
     uint64_t mod;
 
@@ -112,11 +112,11 @@ static void gf_carryless_mul(uint8_t c[2], uint8_t a, uint8_t b) {
  * @param[in] a Element of GF(2^GF_M)
  * @param[in] b Element of GF(2^GF_M)
  */
-uint16_t PQCLEAN_HQC192_CLEANgf_mul(uint16_t a, uint16_t b) {
+uint16_t PQCLEAN_HQC192_CLEAN_gf_mul(uint16_t a, uint16_t b) {
     uint8_t c[2] = {0};
     gf_carryless_mul(c, (uint8_t) a, (uint8_t) b);
     uint16_t tmp = c[0] ^ (c[1] << 8);
-    return PQCLEAN_HQC192_CLEANgf_reduce(tmp, 2 * (PARAM_M - 1));
+    return PQCLEAN_HQC192_CLEAN_gf_reduce(tmp, 2 * (PARAM_M - 1));
 }
 
 /**
@@ -124,7 +124,7 @@ uint16_t PQCLEAN_HQC192_CLEANgf_mul(uint16_t a, uint16_t b) {
  * @returns a^2
  * @param[in] a Element of GF(2^PARAM_M)
  */
-uint16_t PQCLEAN_HQC192_CLEANgf_square(uint16_t a) {
+uint16_t PQCLEAN_HQC192_CLEAN_gf_square(uint16_t a) {
     uint32_t b = a;
     uint32_t s = b & 1;
     for (size_t i = 1; i < PARAM_M; ++i) {
@@ -132,7 +132,7 @@ uint16_t PQCLEAN_HQC192_CLEANgf_square(uint16_t a) {
         s ^= b & (1 << 2 * i);
     }
 
-    return PQCLEAN_HQC192_CLEANgf_reduce(s, 2 * (PARAM_M - 1));
+    return PQCLEAN_HQC192_CLEAN_gf_reduce(s, 2 * (PARAM_M - 1));
 }
 
 /**
@@ -141,20 +141,20 @@ uint16_t PQCLEAN_HQC192_CLEANgf_square(uint16_t a) {
  * @returns the inverse of a if a != 0 or 0 if a = 0
  * @param[in] a Element of GF(2^PARAM_M)
  */
-uint16_t PQCLEAN_HQC192_CLEANgf_inverse(uint16_t a) {
+uint16_t PQCLEAN_HQC192_CLEAN_gf_inverse(uint16_t a) {
     uint16_t inv = a;
     uint16_t tmp1, tmp2;
 
-    inv = PQCLEAN_HQC192_CLEANgf_square(a); /* a^2 */
-    tmp1 = PQCLEAN_HQC192_CLEANgf_mul(inv, a); /* a^3 */
-    inv = PQCLEAN_HQC192_CLEANgf_square(inv); /* a^4 */
-    tmp2 = PQCLEAN_HQC192_CLEANgf_mul(inv, tmp1); /* a^7 */
-    tmp1 = PQCLEAN_HQC192_CLEANgf_mul(inv, tmp2); /* a^11 */
-    inv = PQCLEAN_HQC192_CLEANgf_mul(tmp1, inv); /* a^15 */
-    inv = PQCLEAN_HQC192_CLEANgf_square(inv); /* a^30 */
-    inv = PQCLEAN_HQC192_CLEANgf_square(inv); /* a^60 */
-    inv = PQCLEAN_HQC192_CLEANgf_square(inv); /* a^120 */
-    inv = PQCLEAN_HQC192_CLEANgf_mul(inv, tmp2); /* a^127 */
-    inv = PQCLEAN_HQC192_CLEANgf_square(inv); /* a^254 */
+    inv = PQCLEAN_HQC192_CLEAN_gf_square(a); /* a^2 */
+    tmp1 = PQCLEAN_HQC192_CLEAN_gf_mul(inv, a); /* a^3 */
+    inv = PQCLEAN_HQC192_CLEAN_gf_square(inv); /* a^4 */
+    tmp2 = PQCLEAN_HQC192_CLEAN_gf_mul(inv, tmp1); /* a^7 */
+    tmp1 = PQCLEAN_HQC192_CLEAN_gf_mul(inv, tmp2); /* a^11 */
+    inv = PQCLEAN_HQC192_CLEAN_gf_mul(tmp1, inv); /* a^15 */
+    inv = PQCLEAN_HQC192_CLEAN_gf_square(inv); /* a^30 */
+    inv = PQCLEAN_HQC192_CLEAN_gf_square(inv); /* a^60 */
+    inv = PQCLEAN_HQC192_CLEAN_gf_square(inv); /* a^120 */
+    inv = PQCLEAN_HQC192_CLEAN_gf_mul(inv, tmp2); /* a^127 */
+    inv = PQCLEAN_HQC192_CLEAN_gf_square(inv); /* a^254 */
     return inv;
 }

@@ -193,7 +193,7 @@ static void reduce(uint64_t *o, const uint64_t *a) {
  * \param[in] v1 Pointer to the first polynomial
  * \param[in] v2 Pointer to the second polynomial
  */
-void PQCLEAN_HQC192_CLEANvect_mul(uint64_t *o, const uint64_t *v1, const uint64_t *v2) {
+void PQCLEAN_HQC192_CLEAN_vect_mul(uint64_t *o, const uint64_t *v1, const uint64_t *v2) {
     uint64_t stack[VEC_N_SIZE_64 << 3] = {0};
     uint64_t o_karat[VEC_N_SIZE_64 << 1] = {0};
 
