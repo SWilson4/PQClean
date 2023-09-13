@@ -8,20 +8,7 @@
  * @brief Functions to parse secret key, public key and ciphertext of the HQC scheme
  */
 
-// LSB stored in out[0]
-void PQCLEAN_HQC128_CLEANstore8(uint8_t *out, uint64_t in) {
-    out[0] = (in >> 0x00) & 0xFF;
-    out[1] = (in >> 0x08) & 0xFF;
-    out[2] = (in >> 0x10) & 0xFF;
-    out[3] = (in >> 0x18) & 0xFF;
-    out[4] = (in >> 0x20) & 0xFF;
-    out[5] = (in >> 0x28) & 0xFF;
-    out[6] = (in >> 0x30) & 0xFF;
-    out[7] = (in >> 0x38) & 0xFF;
-}
-
-// LSB stored in out[0]
-uint64_t PQCLEAN_HQC128_CLEANload8(const uint8_t *in) {
+static uint64_t PQCLEAN_HQC128_CLEAN_load8(const uint8_t *in) {
     uint64_t ret = in[7];
 
     for (int8_t i = 6; i >= 0; --i) {
@@ -32,13 +19,13 @@ uint64_t PQCLEAN_HQC128_CLEANload8(const uint8_t *in) {
     return ret;
 }
 
-void PQCLEAN_HQC128_CLEANload8_arr(uint64_t *out64, size_t outlen, const uint8_t *in8, size_t inlen) {
+void PQCLEAN_HQC128_CLEAN_load8_arr(uint64_t *out64, size_t outlen, const uint8_t *in8, size_t inlen) {
     size_t index_in = 0;
     size_t index_out = 0;
     // first copy by 8 bytes
     if (inlen >= 8 && outlen >= 1) {
         while (index_out < outlen && index_in + 8 <= inlen) {
-            out64[index_out] = PQCLEAN_HQC128_CLEANload8(in8 + index_in);
+            out64[index_out] = PQCLEAN_HQC128_CLEAN_load8(in8 + index_in);
 
             index_in += 8;
             index_out += 1;
@@ -56,7 +43,7 @@ void PQCLEAN_HQC128_CLEANload8_arr(uint64_t *out64, size_t outlen, const uint8_t
     }
 }
 
-void PQCLEAN_HQC128_CLEANstore8_arr(uint8_t *out8, size_t outlen, const uint64_t *in64, size_t inlen) {
+void PQCLEAN_HQC128_CLEAN_store8_arr(uint8_t *out8, size_t outlen, const uint64_t *in64, size_t inlen) {
     for (size_t index_out = 0, index_in = 0; index_out < outlen && index_in < inlen;) {
         out8[index_out] = (in64[index_in] >> ((index_out % 8) * 8)) & 0xFF;
         ++index_out;
@@ -74,12 +61,13 @@ void PQCLEAN_HQC128_CLEANstore8_arr(uint8_t *out8, size_t outlen, const uint64_t
  *
  * @param[out] sk String containing the secret key
  * @param[in] sk_seed Seed used to generate the secret key
+ * @param[in] sigma String used in HHK transform
  * @param[in] pk String containing the public key
  */
-void PQCLEAN_HQC128_CLEANhqc_secret_key_to_string(uint8_t *sk, const uint8_t *sk_seed, const uint8_t *pk) {
+void PQCLEAN_HQC128_CLEAN_hqc_secret_key_to_string(uint8_t *sk, const uint8_t *sk_seed, const uint8_t *sigma, const uint8_t *pk) {
     memcpy(sk, sk_seed, SEED_BYTES);
-    sk += SEED_BYTES;
-    memcpy(sk, pk, PUBLIC_KEY_BYTES);
+    memcpy(sk + SEED_BYTES, sigma, VEC_K_SIZE_BYTES);
+    memcpy(sk + SEED_BYTES + VEC_K_SIZE_BYTES, pk, PUBLIC_KEY_BYTES);
 }
 
 /**
@@ -93,17 +81,17 @@ void PQCLEAN_HQC128_CLEANhqc_secret_key_to_string(uint8_t *sk, const uint8_t *sk
  * @param[out] pk String containing the public key
  * @param[in] sk String containing the secret key
  */
-void PQCLEAN_HQC128_CLEANhqc_secret_key_from_string(uint64_t *x, uint64_t *y, uint8_t *pk, const uint8_t *sk) {
+void PQCLEAN_HQC128_CLEAN_hqc_secret_key_from_string(uint64_t *x, uint64_t *y, uint8_t *sigma, uint8_t *pk, const uint8_t *sk) {
     seedexpander_state sk_seedexpander;
 
-    PQCLEAN_HQC128_CLEANseedexpander_init(&sk_seedexpander, sk, SEED_BYTES);
-    sk += SEED_BYTES;
+    memcpy(sigma, sk + SEED_BYTES, VEC_K_SIZE_BYTES);
+    PQCLEAN_HQC128_CLEAN_seedexpander_init(&sk_seedexpander, sk, SEED_BYTES);
 
-    PQCLEAN_HQC128_CLEANvect_set_random_fixed_weight(&sk_seedexpander, x, PARAM_OMEGA);
-    PQCLEAN_HQC128_CLEANvect_set_random_fixed_weight(&sk_seedexpander, y, PARAM_OMEGA);
-    memcpy(pk, sk, PUBLIC_KEY_BYTES);
+    PQCLEAN_HQC128_CLEAN_vect_set_random_fixed_weight(&sk_seedexpander, x, PARAM_OMEGA);
+    PQCLEAN_HQC128_CLEAN_vect_set_random_fixed_weight(&sk_seedexpander, y, PARAM_OMEGA);
+    memcpy(pk, sk + SEED_BYTES + VEC_K_SIZE_BYTES, PUBLIC_KEY_BYTES);
 
-    PQCLEAN_HQC128_CLEANseedexpander_release(&sk_seedexpander);
+    PQCLEAN_HQC128_CLEAN_seedexpander_release(&sk_seedexpander);
 }
 
 /**
@@ -115,10 +103,9 @@ void PQCLEAN_HQC128_CLEANhqc_secret_key_from_string(uint64_t *x, uint64_t *y, ui
  * @param[in] pk_seed Seed used to generate the public key
  * @param[in] s uint64_t representation of vector s
  */
-void PQCLEAN_HQC128_CLEANhqc_public_key_to_string(uint8_t *pk, const uint8_t *pk_seed, const uint64_t *s) {
+void PQCLEAN_HQC128_CLEAN_hqc_public_key_to_string(uint8_t *pk, const uint8_t *pk_seed, const uint64_t *s) {
     memcpy(pk, pk_seed, SEED_BYTES);
-    pk += SEED_BYTES;
-    PQCLEAN_HQC128_CLEANstore8_arr(pk, VEC_N_SIZE_BYTES, s, VEC_N_SIZE_64);
+    PQCLEAN_HQC128_CLEAN_store8_arr(pk + SEED_BYTES, VEC_N_SIZE_BYTES, s, VEC_N_SIZE_64);
 }
 
 /**
@@ -130,53 +117,45 @@ void PQCLEAN_HQC128_CLEANhqc_public_key_to_string(uint8_t *pk, const uint8_t *pk
  * @param[out] s uint64_t representation of vector s
  * @param[in] pk String containing the public key
  */
-void PQCLEAN_HQC128_CLEANhqc_public_key_from_string(uint64_t *h, uint64_t *s, const uint8_t *pk) {
+void PQCLEAN_HQC128_CLEAN_hqc_public_key_from_string(uint64_t *h, uint64_t *s, const uint8_t *pk) {
     seedexpander_state pk_seedexpander;
 
-    PQCLEAN_HQC128_CLEANseedexpander_init(&pk_seedexpander, pk, SEED_BYTES);
-    PQCLEAN_HQC128_CLEANvect_set_random(&pk_seedexpander, h);
+    PQCLEAN_HQC128_CLEAN_seedexpander_init(&pk_seedexpander, pk, SEED_BYTES);
+    PQCLEAN_HQC128_CLEAN_vect_set_random(&pk_seedexpander, h);
 
-    PQCLEAN_HQC128_CLEANload8_arr(s, VEC_N_SIZE_64, pk + SEED_BYTES, VEC_N_SIZE_BYTES);
+    PQCLEAN_HQC128_CLEAN_load8_arr(s, VEC_N_SIZE_64, pk + SEED_BYTES, VEC_N_SIZE_BYTES);
 
-    PQCLEAN_HQC128_CLEANseedexpander_release(&pk_seedexpander);
+    PQCLEAN_HQC128_CLEAN_seedexpander_release(&pk_seedexpander);
 }
 
 /**
  * @brief Parse a ciphertext into a string
  *
- * The ciphertext is composed of vectors <b>u</b>, <b>v</b> and hash <b>d</b>.
+ * The ciphertext is composed of vectors <b>u</b>, <b>v</b> and salt.
  *
  * @param[out] ct String containing the ciphertext
  * @param[in] u uint64_t representation of vector u
  * @param[in] v uint64_t representation of vector v
- * @param[in] d String containing the hash d
+ * @param[in] salt String containing a salt
  */
-void PQCLEAN_HQC128_CLEANhqc_ciphertext_to_string(uint8_t *ct, const uint64_t *u, const uint64_t *v, const uint8_t *d, const uint8_t *salt) {
-    PQCLEAN_HQC128_CLEANstore8_arr(ct, VEC_N_SIZE_BYTES, u, VEC_N_SIZE_64);
-    ct += VEC_N_SIZE_BYTES;
-    PQCLEAN_HQC128_CLEANstore8_arr(ct, VEC_N1N2_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
-    ct += VEC_N1N2_SIZE_BYTES;
-    memcpy(ct, d, SHAKE256_512_BYTES);
-    ct += SHAKE256_512_BYTES;
-    memcpy(ct, salt, SALT_SIZE_BYTES);
+void PQCLEAN_HQC128_CLEAN_hqc_ciphertext_to_string(uint8_t *ct, const uint64_t *u, const uint64_t *v, const uint8_t *salt) {
+    PQCLEAN_HQC128_CLEAN_store8_arr(ct, VEC_N_SIZE_BYTES, u, VEC_N_SIZE_64);
+    PQCLEAN_HQC128_CLEAN_store8_arr(ct + VEC_N_SIZE_BYTES, VEC_N1N2_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
+    memcpy(ct + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES, salt, SALT_SIZE_BYTES);
 }
 
 /**
  * @brief Parse a ciphertext from a string
  *
- * The ciphertext is composed of vectors <b>u</b>, <b>v</b> and hash <b>d</b>.
+ * The ciphertext is composed of vectors <b>u</b>, <b>v</b> and salt.
  *
  * @param[out] u uint64_t representation of vector u
  * @param[out] v uint64_t representation of vector v
  * @param[out] d String containing the hash d
  * @param[in] ct String containing the ciphertext
  */
-void PQCLEAN_HQC128_CLEANhqc_ciphertext_from_string(uint64_t *u, uint64_t *v, uint8_t *d, uint8_t *salt, const uint8_t *ct) {
-    PQCLEAN_HQC128_CLEANload8_arr(u, VEC_N_SIZE_64, ct, VEC_N_SIZE_BYTES);
-    ct += VEC_N_SIZE_BYTES;
-    PQCLEAN_HQC128_CLEANload8_arr(v, VEC_N1N2_SIZE_64, ct, VEC_N1N2_SIZE_BYTES);
-    ct += VEC_N1N2_SIZE_BYTES;
-    memcpy(d, ct, SHAKE256_512_BYTES);
-    ct += SHAKE256_512_BYTES;
-    memcpy(salt, ct, SALT_SIZE_BYTES);
+void PQCLEAN_HQC128_CLEAN_hqc_ciphertext_from_string(uint64_t *u, uint64_t *v, uint8_t *salt, const uint8_t *ct) {
+    PQCLEAN_HQC128_CLEAN_load8_arr(u, VEC_N_SIZE_64, ct, VEC_N_SIZE_BYTES);
+    PQCLEAN_HQC128_CLEAN_load8_arr(v, VEC_N1N2_SIZE_64, ct + VEC_N_SIZE_BYTES, VEC_N1N2_SIZE_BYTES);
+    memcpy(salt, ct + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES, SALT_SIZE_BYTES);
 }

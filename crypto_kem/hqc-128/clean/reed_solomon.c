@@ -27,7 +27,7 @@ static void correct_errors(uint8_t *cdw, const uint16_t *error_values);
  * @param[out] cdw Array of size VEC_N1_SIZE_64 receiving the encoded message
  * @param[in] msg Array of size VEC_K_SIZE_64 storing the message
  */
-void PQCLEAN_HQC128_CLEANreed_solomon_encode(uint8_t *cdw, const uint8_t *msg) {
+void PQCLEAN_HQC128_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *msg) {
     uint8_t gate_value = 0;
 
     uint16_t tmp[PARAM_G] = {0};
@@ -40,7 +40,7 @@ void PQCLEAN_HQC128_CLEANreed_solomon_encode(uint8_t *cdw, const uint8_t *msg) {
         gate_value = msg[PARAM_K - 1 - i] ^ cdw[PARAM_N1 - PARAM_K - 1];
 
         for (size_t j = 0; j < PARAM_G; ++j) {
-            tmp[j] = PQCLEAN_HQC128_CLEANgf_mul(gate_value, PARAM_RS_POLY[j]);
+            tmp[j] = PQCLEAN_HQC128_CLEAN_gf_mul(gate_value, PARAM_RS_POLY[j]);
         }
 
         for (size_t k = PARAM_N1 - PARAM_K - 1; k; --k) {
@@ -62,7 +62,7 @@ void PQCLEAN_HQC128_CLEANreed_solomon_encode(uint8_t *cdw, const uint8_t *msg) {
 void compute_syndromes(uint16_t *syndromes, uint8_t *cdw) {
     for (size_t i = 0; i < 2 * PARAM_DELTA; ++i) {
         for (size_t j = 1; j < PARAM_N1; ++j) {
-            syndromes[i] ^= PQCLEAN_HQC128_CLEANgf_mul(cdw[j], alpha_ij_pow[i][j - 1]);
+            syndromes[i] ^= PQCLEAN_HQC128_CLEAN_gf_mul(cdw[j], alpha_ij_pow[i][j - 1]);
         }
         syndromes[i] ^= cdw[0];
     }
@@ -107,10 +107,10 @@ static uint16_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
         memcpy(sigma_copy, sigma, 2 * (PARAM_DELTA));
         deg_sigma_copy = deg_sigma;
 
-        dd = PQCLEAN_HQC128_CLEANgf_mul(d, PQCLEAN_HQC128_CLEANgf_inverse(d_p));
+        dd = PQCLEAN_HQC128_CLEAN_gf_mul(d, PQCLEAN_HQC128_CLEAN_gf_inverse(d_p));
 
         for (i = 1; (i <= mu + 1) && (i <= PARAM_DELTA); ++i) {
-            sigma[i] ^= PQCLEAN_HQC128_CLEANgf_mul(dd, X_sigma_p[i]);
+            sigma[i] ^= PQCLEAN_HQC128_CLEAN_gf_mul(dd, X_sigma_p[i]);
         }
 
         deg_X = mu - pp;
@@ -140,7 +140,7 @@ static uint16_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
         d = syndromes[mu + 1];
 
         for (i = 1; (i <= mu + 1) && (i <= PARAM_DELTA); ++i) {
-            d ^= PQCLEAN_HQC128_CLEANgf_mul(sigma[i], syndromes[mu + 1 - i]);
+            d ^= PQCLEAN_HQC128_CLEAN_gf_mul(sigma[i], syndromes[mu + 1 - i]);
         }
     }
 
@@ -150,7 +150,7 @@ static uint16_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
 /**
  * @brief Computes the error polynomial error from the error locator polynomial sigma
  *
- * See function PQCLEAN_HQC128_CLEANfft for more details.
+ * See function PQCLEAN_HQC128_CLEAN_fft for more details.
  *
  * @param[out] error Array of 2^PARAM_M elements receiving the error polynomial
  * @param[out] error_compact Array of PARAM_DELTA + PARAM_N1 elements receiving a compact representation of the vector error
@@ -159,8 +159,8 @@ static uint16_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
 static void compute_roots(uint8_t *error, uint16_t *sigma) {
     uint16_t w[1 << PARAM_M] = {0};
 
-    PQCLEAN_HQC128_CLEANfft(w, sigma, PARAM_DELTA + 1);
-    PQCLEAN_HQC128_CLEANfft_retrieve_error_poly(error, w);
+    PQCLEAN_HQC128_CLEAN_fft(w, sigma, PARAM_DELTA + 1);
+    PQCLEAN_HQC128_CLEAN_fft_retrieve_error_poly(error, w);
 }
 
 /**
@@ -191,7 +191,7 @@ static void compute_z_poly(uint16_t *z, const uint16_t *sigma, uint16_t degree, 
         z[i] ^= mask & syndromes[i - 1];
 
         for (j = 1; j < i; ++j) {
-            z[i] ^= mask & PQCLEAN_HQC128_CLEANgf_mul(sigma[j], syndromes[i - j - 1]);
+            z[i] ^= mask & PQCLEAN_HQC128_CLEAN_gf_mul(sigma[j], syndromes[i - j - 1]);
         }
     }
 }
@@ -238,18 +238,18 @@ static void compute_error_values(uint16_t *error_values, const uint16_t *z, cons
     for (size_t i = 0; i < PARAM_DELTA; ++i) {
         tmp1 = 1;
         tmp2 = 1;
-        inverse = PQCLEAN_HQC128_CLEANgf_inverse(beta_j[i]);
+        inverse = PQCLEAN_HQC128_CLEAN_gf_inverse(beta_j[i]);
         inverse_power_j = 1;
 
         for (size_t j = 1; j <= PARAM_DELTA; ++j) {
-            inverse_power_j = PQCLEAN_HQC128_CLEANgf_mul(inverse_power_j, inverse);
-            tmp1 ^= PQCLEAN_HQC128_CLEANgf_mul(inverse_power_j, z[j]);
+            inverse_power_j = PQCLEAN_HQC128_CLEAN_gf_mul(inverse_power_j, inverse);
+            tmp1 ^= PQCLEAN_HQC128_CLEAN_gf_mul(inverse_power_j, z[j]);
         }
         for (size_t k = 1; k < PARAM_DELTA; ++k) {
-            tmp2 = PQCLEAN_HQC128_CLEANgf_mul(tmp2, (1 ^ PQCLEAN_HQC128_CLEANgf_mul(inverse, beta_j[(i + k) % PARAM_DELTA])));
+            tmp2 = PQCLEAN_HQC128_CLEAN_gf_mul(tmp2, (1 ^ PQCLEAN_HQC128_CLEAN_gf_mul(inverse, beta_j[(i + k) % PARAM_DELTA])));
         }
         mask1 = (uint16_t) (((int16_t) i - delta_real_value) >> 15); // i < delta_real_value
-        e_j[i] = mask1 & PQCLEAN_HQC128_CLEANgf_mul(tmp1, PQCLEAN_HQC128_CLEANgf_inverse(tmp2));
+        e_j[i] = mask1 & PQCLEAN_HQC128_CLEAN_gf_mul(tmp1, PQCLEAN_HQC128_CLEAN_gf_inverse(tmp2));
     }
 
     // Place the delta e_{j_i} values at the right coordinates of the output vector
@@ -296,7 +296,7 @@ static void correct_errors(uint8_t *cdw, const uint16_t *error_values) {
  * @param[out] msg Array of size VEC_K_SIZE_64 receiving the decoded message
  * @param[in] cdw Array of size VEC_N1_SIZE_64 storing the received word
  */
-void PQCLEAN_HQC128_CLEANreed_solomon_decode(uint8_t *msg, uint8_t *cdw) {
+void PQCLEAN_HQC128_CLEAN_reed_solomon_decode(uint8_t *msg, uint8_t *cdw) {
     uint16_t syndromes[2 * PARAM_DELTA] = {0};
     uint16_t sigma[1 << PARAM_FFT] = {0};
     uint8_t error[1 << PARAM_M] = {0};
