@@ -22,7 +22,6 @@ static uint64_t PQCLEAN_HQC192_CLEAN_load8(const uint8_t *in) {
 void PQCLEAN_HQC192_CLEAN_load8_arr(uint64_t *out64, size_t outlen, const uint8_t *in8, size_t inlen) {
     size_t index_in = 0;
     size_t index_out = 0;
-
     // first copy by 8 bytes
     if (inlen >= 8 && outlen >= 1) {
         while (index_out < outlen && index_in + 8 <= inlen) {
@@ -62,6 +61,7 @@ void PQCLEAN_HQC192_CLEAN_store8_arr(uint8_t *out8, size_t outlen, const uint64_
  *
  * @param[out] sk String containing the secret key
  * @param[in] sk_seed Seed used to generate the secret key
+ * @param[in] sigma String used in HHK transform
  * @param[in] pk String containing the public key
  */
 void PQCLEAN_HQC192_CLEAN_hqc_secret_key_to_string(uint8_t *sk, const uint8_t *sk_seed, const uint8_t *sigma, const uint8_t *pk) {

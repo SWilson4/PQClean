@@ -9,10 +9,10 @@
 
 #define PQCLEAN_HQC192_CLEAN_CRYPTO_ALGNAME                      "HQC-192"
 
-#define PQCLEAN_HQC192_CLEAN_CRYPTO_SECRETKEYBYTES               4562
+#define PQCLEAN_HQC192_CLEAN_CRYPTO_SECRETKEYBYTES               4586
 #define PQCLEAN_HQC192_CLEAN_CRYPTO_PUBLICKEYBYTES               4522
 #define PQCLEAN_HQC192_CLEAN_CRYPTO_BYTES                        64
-#define PQCLEAN_HQC192_CLEAN_CRYPTO_CIPHERTEXTBYTES              9042
+#define PQCLEAN_HQC192_CLEAN_CRYPTO_CIPHERTEXTBYTES              8978
 
 // As a technicality, the public key is appended to the secret key in order to respect the NIST API.
 // Without this constraint, PQCLEAN_HQC192_CLEAN_CRYPTO_SECRETKEYBYTES would be defined as 32
