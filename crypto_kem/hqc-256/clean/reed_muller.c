@@ -154,7 +154,7 @@ static uint8_t find_peaks(const uint16_t transform[128]) {
         pos ^= mask & (pos ^ i);
         peak_abs ^= mask & (peak_abs ^ abs);
     }
-    pos |= 128 & ((peak >> 15) - 1);
+    pos |= 128 & (uint16_t)((peak >> 15) - 1);
     return (uint8_t) pos;
 }
 

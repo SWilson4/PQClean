@@ -82,7 +82,7 @@ void PQCLEAN_HQC256_CLEAN_hqc_secret_key_to_string(uint8_t *sk, const uint8_t *s
  * @param[out] pk String containing the public key
  * @param[in] sk String containing the secret key
  */
-void PQCLEAN_HQC256_CLEAN_hqc_secret_key_from_string(uint64_t *x, uint64_t *y, uint8_t *pk, const uint8_t *sk) {
+void PQCLEAN_HQC256_CLEAN_hqc_secret_key_from_string(uint64_t *x, uint64_t *y, uint8_t *sigma, uint8_t *pk, const uint8_t *sk) {
     seedexpander_state sk_seedexpander;
 
     memcpy(sigma, sk + SEED_BYTES, VEC_K_SIZE_BYTES);
