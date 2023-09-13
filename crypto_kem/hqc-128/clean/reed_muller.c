@@ -30,7 +30,6 @@
  * @param[out] word An RM(1,7) codeword
  * @param[in] message A message
  */
-// MODIFICATIONS HERE FORCE LITTLE-ENDIAN REPRESENTATION
 static void encode(uint64_t *cword, uint8_t message) {
     uint32_t e;
     // bit 7 flips all the bits, do that first to save work
@@ -84,7 +83,6 @@ static void encode(uint64_t *cword, uint8_t message) {
  * @param[out] src Structure that contain the expanded codeword
  * @param[out] dst Structure that contain the expanded codeword
  */
-// NO CHANGES NEEDED HERE
 static void hadamard(uint16_t src[128], uint16_t dst[128]) {
     // the passes move data:
     // src -> dst -> src -> dst -> src -> dst -> src -> dst
@@ -133,7 +131,6 @@ static void expand_and_sum(uint16_t dest[128], const uint64_t src[2 * MULTIPLICI
         }
     }
 }
-// GOOD
 
 /**
  * @brief Finding the location of the highest value
@@ -160,7 +157,6 @@ static uint8_t find_peaks(const uint16_t transform[128]) {
     pos |= 128 & (uint16_t)((peak >> 15) - 1);
     return (uint8_t) pos;
 }
-// GOOD
 
 /**
  * @brief Encodes the received word
@@ -180,7 +176,6 @@ void PQCLEAN_HQC128_CLEAN_reed_muller_encode(uint64_t *cdw, const uint8_t *msg) 
         }
     }
 }
-// GOOD
 
 /**
  * @brief Decodes the received word
@@ -205,4 +200,3 @@ void PQCLEAN_HQC128_CLEAN_reed_muller_decode(uint8_t *msg, const uint64_t *cdw) 
         msg[i] = find_peaks(transform);
     }
 }
-// GOOD

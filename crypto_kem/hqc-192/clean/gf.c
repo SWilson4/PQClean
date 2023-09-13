@@ -12,7 +12,7 @@
  * @returns The number of trailing zero bits in a.
  * @param[in] a An operand
  */
-static uint16_t trailing_zero_bits_count(uint16_t a) { // ENDIANNESS OK
+static uint16_t trailing_zero_bits_count(uint16_t a) {
     uint16_t tmp = 0;
     uint16_t mask = 0xFFFF;
     for (size_t i = 0; i < 14; ++i) {
