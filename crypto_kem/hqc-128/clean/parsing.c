@@ -23,6 +23,7 @@ static uint64_t load8(const uint8_t *in) {
 void PQCLEAN_HQC128_CLEAN_load8_arr(uint64_t *out64, size_t outlen, const uint8_t *in8, size_t inlen) {
     size_t index_in = 0;
     size_t index_out = 0;
+
     // first copy by 8 bytes
     if (inlen >= 8 && outlen >= 1) {
         while (index_out < outlen && index_in + 8 <= inlen) {

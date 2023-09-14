@@ -1,13 +1,13 @@
+/**
+ * @file code.c
+ * @brief Implementation of concatenated code
+ */
+
 #include "code.h"
 #include "parameters.h"
 #include "reed_muller.h"
 #include "reed_solomon.h"
 #include <stdint.h>
-#include <string.h>
-/**
- * @file code.c
- * @brief Implementation of concatenated code
- */
 
 /**
  *

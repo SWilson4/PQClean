@@ -1,10 +1,12 @@
-#include "gf.h"
-#include "parameters.h"
-#include <stdint.h>
 /**
  * @file gf.c
  * @brief Galois field implementation
  */
+
+#include "gf.h"
+#include "parameters.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /**
  * @brief Computes the number of trailing zero bits.

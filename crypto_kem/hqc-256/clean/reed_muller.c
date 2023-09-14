@@ -1,11 +1,12 @@
-#include "parameters.h"
-#include "reed_muller.h"
-#include <stdint.h>
-#include <string.h>
 /**
  * @file reed_muller.c
  * @brief Constant time implementation of Reed-Muller code RM(1,7)
  */
+
+#include "parameters.h"
+#include "reed_muller.h"
+#include <stdint.h>
+#include <string.h>
 
 // number of repeated code words
 #define MULTIPLICITY                   CEIL_DIVIDE(PARAM_N2, 128)
@@ -83,7 +84,7 @@ static void encode(uint64_t *cword, uint8_t message) {
  * @param[out] src Structure that contain the expanded codeword
  * @param[out] dst Structure that contain the expanded codeword
  */
-static void hadamard(uint16_t src[256], uint16_t dst[256]) {
+static void hadamard(uint16_t src[128], uint16_t dst[128]) {
     // the passes move data:
     // src -> dst -> src -> dst -> src -> dst -> src -> dst
     // using p1 and p2 alternately
@@ -187,8 +188,8 @@ void PQCLEAN_HQC256_CLEAN_reed_muller_encode(uint64_t *cdw, const uint8_t *msg) 
  * @param[in] cdw Array of size VEC_N1N2_SIZE_64 storing the received word
  */
 void PQCLEAN_HQC256_CLEAN_reed_muller_decode(uint8_t *msg, const uint64_t *cdw) {
-    uint16_t expanded[256];
-    uint16_t transform[256];
+    uint16_t expanded[128];
+    uint16_t transform[128];
     for (size_t i = 0; i < VEC_N1_SIZE_BYTES; ++i) {
         // collect the codewords
         expand_and_sum(expanded, &cdw[2 * i * MULTIPLICITY]);

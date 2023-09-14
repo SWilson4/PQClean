@@ -10,7 +10,6 @@
 #include <stdint.h>
 
 void PQCLEAN_HQC256_CLEAN_fft(uint16_t *w, const uint16_t *f, size_t f_coeffs);
-
 void PQCLEAN_HQC256_CLEAN_fft_retrieve_error_poly(uint8_t *error, const uint16_t *w);
 
 #endif

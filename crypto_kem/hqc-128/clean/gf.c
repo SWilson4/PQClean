@@ -1,6 +1,6 @@
 /**
  * @file gf.c
- * @brief Galois field implementation with multiplication using the pclmulqdq instruction
+ * @brief Galois field implementation
  */
 
 #include "gf.h"

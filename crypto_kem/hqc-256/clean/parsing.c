@@ -1,12 +1,13 @@
+/**
+ * @file parsing.c
+ * @brief Functions to parse secret key, public key and ciphertext of the HQC scheme
+ */
+
 #include "parameters.h"
 #include "parsing.h"
 #include "vector.h"
 #include <stdint.h>
 #include <string.h>
-/**
- * @file parsing.c
- * @brief Functions to parse secret key, public key and ciphertext of the HQC scheme
- */
 
 static uint64_t load8(const uint8_t *in) {
     uint64_t ret = in[7];

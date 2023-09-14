@@ -1,11 +1,12 @@
+/**
+ * @file gf2x.c
+ * @brief Implementation of multiplication of two polynomials
+ */
+
 #include "gf2x.h"
 #include "parameters.h"
-#include "parsing.h"
+#include <stddef.h>
 #include <stdint.h>
-/**
- * \file gf2x.c
- * \brief Implementation of multiplication of two polynomials
- */
 
 /**
  * @brief Caryless multiplication of two words of 64 bits
@@ -114,7 +115,6 @@ static void karatsuba_add2(uint64_t *o, uint64_t *tmp1, const uint64_t *tmp2, si
         o[i + size_l] = o[i + size_l] ^ tmp1[i];
     }
 }
-// GOOD
 
 /**
  * Karatsuba multiplication of a and b, Implementation inspired from the NTL library.
@@ -157,7 +157,6 @@ static void karatsuba(uint64_t *o, const uint64_t *a, const uint64_t *b, size_t 
 
     karatsuba_add2(o, tmp1, tmp2, size_l, size_h);
 }
-// GOOD
 
 /**
  * @brief Compute o(x) = a(x) mod \f$ X^n - 1\f$
