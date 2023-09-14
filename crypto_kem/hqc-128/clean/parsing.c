@@ -1,14 +1,15 @@
-#include "parameters.h"
-#include "parsing.h"
-#include "vector.h"
-#include <stdint.h>
-#include <string.h>
 /**
  * @file parsing.c
  * @brief Functions to parse secret key, public key and ciphertext of the HQC scheme
  */
 
-static uint64_t PQCLEAN_HQC128_CLEAN_load8(const uint8_t *in) {
+#include "parameters.h"
+#include "parsing.h"
+#include "vector.h"
+#include <stdint.h>
+#include <string.h>
+
+static uint64_t load8(const uint8_t *in) {
     uint64_t ret = in[7];
 
     for (int8_t i = 6; i >= 0; --i) {
@@ -25,7 +26,7 @@ void PQCLEAN_HQC128_CLEAN_load8_arr(uint64_t *out64, size_t outlen, const uint8_
     // first copy by 8 bytes
     if (inlen >= 8 && outlen >= 1) {
         while (index_out < outlen && index_in + 8 <= inlen) {
-            out64[index_out] = PQCLEAN_HQC128_CLEAN_load8(in8 + index_in);
+            out64[index_out] = load8(in8 + index_in);
 
             index_in += 8;
             index_out += 1;

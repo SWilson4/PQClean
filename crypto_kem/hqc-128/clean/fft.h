@@ -6,7 +6,6 @@
  * @brief Header file of fft.c
  */
 
-
 #include <stddef.h>
 #include <stdint.h>
 

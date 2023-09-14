@@ -1,10 +1,10 @@
+#ifndef PQCLEAN_HQC128_CLEAN_API_H
+#define PQCLEAN_HQC128_CLEAN_API_H
+
 /**
  * @file api.h
  * @brief NIST KEM API used by the HQC_KEM IND-CCA2 scheme
  */
-
-#ifndef PQCLEAN_HQC128_CLEAN_API_H
-#define PQCLEAN_HQC128_CLEAN_API_H
 
 #include <stdint.h>
 

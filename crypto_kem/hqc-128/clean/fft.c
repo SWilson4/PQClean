@@ -1,8 +1,3 @@
-#include "fft.h"
-#include "gf.h"
-#include "parameters.h"
-#include <stdint.h>
-#include <string.h>
 /**
  * @file fft.c
  * @brief Implementation of the additive FFT and its transpose.
@@ -14,11 +9,13 @@
  * https://binary.cr.yp.to/mcbits-20130616.pdf
  */
 
-static void compute_fft_betas(uint16_t *betas);
-static void compute_subset_sums(uint16_t *subset_sums, const uint16_t *set, uint16_t set_size);
-static void radix(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_f);
+#include "fft.h"
+#include "gf.h"
+#include "parameters.h"
+#include <stdint.h>
+#include <string.h>
+
 static void radix_big(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_f);
-static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32_t m_f, const uint16_t *betas);
 
 /**
  * @brief Computes the basis of betas (omitting 1) used in the additive FFT and its transpose
@@ -67,52 +64,52 @@ static void compute_subset_sums(uint16_t *subset_sums, const uint16_t *set, uint
  */
 static void radix(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_f) {
     switch (m_f) {
-    case 4:
-        f0[4] = f[8] ^ f[12];
-        f0[6] = f[12] ^ f[14];
-        f0[7] = f[14] ^ f[15];
-        f1[5] = f[11] ^ f[13];
-        f1[6] = f[13] ^ f[14];
-        f1[7] = f[15];
-        f0[5] = f[10] ^ f[12] ^ f1[5];
-        f1[4] = f[9] ^ f[13] ^ f0[5];
+        case 4:
+            f0[4] = f[8] ^ f[12];
+            f0[6] = f[12] ^ f[14];
+            f0[7] = f[14] ^ f[15];
+            f1[5] = f[11] ^ f[13];
+            f1[6] = f[13] ^ f[14];
+            f1[7] = f[15];
+            f0[5] = f[10] ^ f[12] ^ f1[5];
+            f1[4] = f[9] ^ f[13] ^ f0[5];
 
-        f0[0] = f[0];
-        f1[3] = f[7] ^ f[11] ^ f[15];
-        f0[3] = f[6] ^ f[10] ^ f[14] ^ f1[3];
-        f0[2] = f[4] ^ f0[4] ^ f0[3] ^ f1[3];
-        f1[1] = f[3] ^ f[5] ^ f[9] ^ f[13] ^ f1[3];
-        f1[2] = f[3] ^ f1[1] ^ f0[3];
-        f0[1] = f[2] ^ f0[2] ^ f1[1];
-        f1[0] = f[1] ^ f0[1];
-        break;
+            f0[0] = f[0];
+            f1[3] = f[7] ^ f[11] ^ f[15];
+            f0[3] = f[6] ^ f[10] ^ f[14] ^ f1[3];
+            f0[2] = f[4] ^ f0[4] ^ f0[3] ^ f1[3];
+            f1[1] = f[3] ^ f[5] ^ f[9] ^ f[13] ^ f1[3];
+            f1[2] = f[3] ^ f1[1] ^ f0[3];
+            f0[1] = f[2] ^ f0[2] ^ f1[1];
+            f1[0] = f[1] ^ f0[1];
+            break;
 
-    case 3:
-        f0[0] = f[0];
-        f0[2] = f[4] ^ f[6];
-        f0[3] = f[6] ^ f[7];
-        f1[1] = f[3] ^ f[5] ^ f[7];
-        f1[2] = f[5] ^ f[6];
-        f1[3] = f[7];
-        f0[1] = f[2] ^ f0[2] ^ f1[1];
-        f1[0] = f[1] ^ f0[1];
-        break;
+        case 3:
+            f0[0] = f[0];
+            f0[2] = f[4] ^ f[6];
+            f0[3] = f[6] ^ f[7];
+            f1[1] = f[3] ^ f[5] ^ f[7];
+            f1[2] = f[5] ^ f[6];
+            f1[3] = f[7];
+            f0[1] = f[2] ^ f0[2] ^ f1[1];
+            f1[0] = f[1] ^ f0[1];
+            break;
 
-    case 2:
-        f0[0] = f[0];
-        f0[1] = f[2] ^ f[3];
-        f1[0] = f[1] ^ f0[1];
-        f1[1] = f[3];
-        break;
+        case 2:
+            f0[0] = f[0];
+            f0[1] = f[2] ^ f[3];
+            f1[0] = f[1] ^ f0[1];
+            f1[1] = f[3];
+            break;
 
-    case 1:
-        f0[0] = f[0];
-        f1[0] = f[1];
-        break;
+        case 1:
+            f0[0] = f[0];
+            f1[0] = f[1];
+            break;
 
-    default:
-        radix_big(f0, f1, f, m_f);
-        break;
+        default:
+            radix_big(f0, f1, f, m_f);
+            break;
     }
 }
 

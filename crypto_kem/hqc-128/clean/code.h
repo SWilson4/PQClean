@@ -6,8 +6,6 @@
  * @brief Header file of code.c
  */
 
-#include "parameters.h"
-#include <stddef.h>
 #include <stdint.h>
 
 void PQCLEAN_HQC128_CLEAN_code_encode(uint64_t *em, const uint8_t *message);

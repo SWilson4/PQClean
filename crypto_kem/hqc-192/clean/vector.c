@@ -24,7 +24,6 @@ static uint32_t m_val[114] = { 119800, 119803, 119807, 119810, 119813, 119817, 1
 static inline uint32_t compare_u32(uint32_t v1, uint32_t v2) {
     return 1 ^ ((uint32_t)((v1 - v2) | (v2 - v1)) >> 31);
 }
-// GOOD
 
 static uint64_t single_bit_mask(uint32_t pos) {
     uint64_t ret = 0;
@@ -40,7 +39,6 @@ static uint64_t single_bit_mask(uint32_t pos) {
 
     return ret;
 }
-// GOOD
 
 static inline uint32_t cond_sub(uint32_t r, uint32_t n) {
     uint32_t mask;
@@ -48,7 +46,6 @@ static inline uint32_t cond_sub(uint32_t r, uint32_t n) {
     mask = -(r >> 31);
     return r + (n & mask);
 }
-// GOOD
 
 static inline uint32_t reduce(uint32_t a, size_t i) {
     uint32_t q, n, r;
@@ -57,7 +54,6 @@ static inline uint32_t reduce(uint32_t a, size_t i) {
     r = a - q * n;
     return cond_sub(r, n);
 }
-// GOOD
 
 /**
  * @brief Generates a vector of a given Hamming weight
@@ -115,7 +111,6 @@ void PQCLEAN_HQC192_CLEAN_vect_set_random_fixed_weight(seedexpander_state *ctx, 
         v[i] |= val;
     }
 }
-// GOOD TO HERE
 
 /**
  * @brief Generates a random vector of dimension <b>PARAM_N</b>
@@ -134,7 +129,6 @@ void PQCLEAN_HQC192_CLEAN_vect_set_random(seedexpander_state *ctx, uint64_t *v) 
     PQCLEAN_HQC192_CLEAN_load8_arr(v, VEC_N_SIZE_64, rand_bytes, VEC_N_SIZE_BYTES);
     v[VEC_N_SIZE_64 - 1] &= RED_MASK;
 }
-// GOOD
 
 /**
  * @brief Adds two vectors
@@ -149,7 +143,6 @@ void PQCLEAN_HQC192_CLEAN_vect_add(uint64_t *o, const uint64_t *v1, const uint64
         o[i] = v1[i] ^ v2[i];
     }
 }
-// GOOD
 
 /**
  * @brief Compares two vectors
@@ -166,7 +159,6 @@ uint8_t PQCLEAN_HQC192_CLEAN_vect_compare(const uint8_t *v1, const uint8_t *v2, 
     }
     return (r - 1) >> 8;
 }
-// GOOD
 
 /**
  * @brief Resize a vector so that it contains <b>size_o</b> bits
@@ -194,4 +186,3 @@ void PQCLEAN_HQC192_CLEAN_vect_resize(uint64_t *o, uint32_t size_o, const uint64
         memcpy(o, v, 8 * CEIL_DIVIDE(size_v, 64));
     }
 }
-// GOOD

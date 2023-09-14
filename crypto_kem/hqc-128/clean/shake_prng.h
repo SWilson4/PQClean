@@ -7,20 +7,13 @@
  */
 
 #include "fips202.h"
+#include <stddef.h>
 #include <stdint.h>
 
 typedef shake256incctx seedexpander_state;
 
-void PQCLEAN_HQC128_CLEAN_shake_prng_init(const uint8_t *entropy_input, const uint8_t *personalization_string, size_t enlen, size_t perlen);
-
-void PQCLEAN_HQC128_CLEAN_shake_prng(uint8_t *output, size_t outlen);
-
-void PQCLEAN_HQC128_CLEAN_shake_prng_release(void);
-
 void PQCLEAN_HQC128_CLEAN_seedexpander_init(seedexpander_state *state, const uint8_t *seed, size_t seedlen);
-
 void PQCLEAN_HQC128_CLEAN_seedexpander(seedexpander_state *state, uint8_t *output, size_t outlen);
-
 void PQCLEAN_HQC128_CLEAN_seedexpander_release(seedexpander_state *state);
 
 #endif

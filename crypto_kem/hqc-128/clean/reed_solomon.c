@@ -1,21 +1,14 @@
-#include "fft.h"
-#include "gf.h"
-#include "parameters.h"
-#include "parsing.h"
-#include "reed_solomon.h"
-#include <stdint.h>
-#include <string.h>
 /**
  * @file reed_solomon.c
  * @brief Constant time implementation of Reed-Solomon codes
  */
 
-static void compute_syndromes(uint16_t *syndromes, uint8_t *cdw);
-static uint16_t compute_elp(uint16_t *sigma, const uint16_t *syndromes);
-static void compute_roots(uint8_t *error, uint16_t *sigma);
-static void compute_z_poly(uint16_t *z, const uint16_t *sigma, uint16_t degree, const uint16_t *syndromes);
-static void compute_error_values(uint16_t *error_values, const uint16_t *z, const uint8_t *error);
-static void correct_errors(uint8_t *cdw, const uint16_t *error_values);
+#include "fft.h"
+#include "gf.h"
+#include "parameters.h"
+#include "reed_solomon.h"
+#include <stdint.h>
+#include <string.h>
 
 /**
  * @brief Encodes a message message of PARAM_K bits to a Reed-Solomon codeword codeword of PARAM_N1 bytes
@@ -34,7 +27,6 @@ void PQCLEAN_HQC128_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *msg) 
     uint16_t PARAM_RS_POLY [] = {RS_POLY_COEFS};
 
     memset(cdw, 0, PARAM_N1);
-    // should msg be stored as bytes or words?
 
     for (size_t i = 0; i < PARAM_K; ++i) {
         gate_value = msg[PARAM_K - 1 - i] ^ cdw[PARAM_N1 - PARAM_K - 1];
@@ -59,7 +51,7 @@ void PQCLEAN_HQC128_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *msg) 
  * @param[out] syndromes Array of size 2 * PARAM_DELTA receiving the computed syndromes
  * @param[in] cdw Array of size PARAM_N1 storing the received vector
  */
-void compute_syndromes(uint16_t *syndromes, uint8_t *cdw) {
+static void compute_syndromes(uint16_t *syndromes, uint8_t *cdw) {
     for (size_t i = 0; i < 2 * PARAM_DELTA; ++i) {
         for (size_t j = 1; j < PARAM_N1; ++j) {
             syndromes[i] ^= PQCLEAN_HQC128_CLEAN_gf_mul(cdw[j], alpha_ij_pow[i][j - 1]);

@@ -1,11 +1,12 @@
-#include "parameters.h"
-#include "reed_muller.h"
-#include <stdint.h>
-#include <string.h>
 /**
  * @file reed_muller.c
  * @brief Constant time implementation of Reed-Muller code RM(1,7)
  */
+
+#include "parameters.h"
+#include "reed_muller.h"
+#include <stdint.h>
+#include <string.h>
 
 // number of repeated code words
 #define MULTIPLICITY                   CEIL_DIVIDE(PARAM_N2, 128)

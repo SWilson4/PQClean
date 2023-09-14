@@ -1,8 +1,12 @@
+/**
+ * @file kem.c
+ * @brief Implementation of api.h
+ */
+
 #include "api.h"
 #include "domains.h"
 #include "fips202.h"
 #include "hqc.h"
-#include "nistseedexpander.h"
 #include "parameters.h"
 #include "parsing.h"
 #include "randombytes.h"
@@ -10,12 +14,6 @@
 #include "vector.h"
 #include <stdint.h>
 #include <string.h>
-/**
- * @file kem.c
- * @brief Implementation of api.h
- */
-
-//#define PQCLEAN_randombytes PQCLEAN_HQC128_CLEAN_shake_prng
 
 /**
  * @brief Keygen of the HQC_KEM IND_CAA2 scheme

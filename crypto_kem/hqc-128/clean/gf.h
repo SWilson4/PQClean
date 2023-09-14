@@ -6,7 +6,6 @@
  * @brief Header file of gf.c
  */
 
-#include <stddef.h>
 #include <stdint.h>
 
 /**

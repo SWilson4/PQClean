@@ -1,5 +1,9 @@
+/**
+ * @file hqc.c
+ * @brief Implementation of hqc.h
+ */
+
 #include "code.h"
-#include "fips202.h"
 #include "gf2x.h"
 #include "hqc.h"
 #include "parameters.h"
@@ -8,10 +12,6 @@
 #include "shake_prng.h"
 #include "vector.h"
 #include <stdint.h>
-/**
- * @file hqc.c
- * @brief Implementation of hqc.h
- */
 
 /**
  * @brief Keygen of the HQC_PKE IND_CPA scheme
@@ -24,7 +24,7 @@
  * @param[out] pk String containing the public key
  * @param[out] sk String containing the secret key
  */
-void PQCLEAN_HQC128_CLEAN_hqc_pke_keygen(unsigned char *pk, unsigned char *sk) {
+void PQCLEAN_HQC128_CLEAN_hqc_pke_keygen(uint8_t *pk, uint8_t *sk) {
     seedexpander_state sk_seedexpander;
     seedexpander_state pk_seedexpander;
     uint8_t sk_seed[SEED_BYTES] = {0};
@@ -36,13 +36,10 @@ void PQCLEAN_HQC128_CLEAN_hqc_pke_keygen(unsigned char *pk, unsigned char *sk) {
     uint64_t s[VEC_N_SIZE_64] = {0};
 
     // Create seed_expanders for public key and secret key
-    //PQCLEAN_HQC128_CLEAN_shake_prng(sk_seed, SEED_BYTES);
-    //PQCLEAN_HQC128_CLEAN_shake_prng(sigma, VEC_K_SIZE_BYTES);
     randombytes(sk_seed, SEED_BYTES);
     randombytes(sigma, VEC_K_SIZE_BYTES);
     PQCLEAN_HQC128_CLEAN_seedexpander_init(&sk_seedexpander, sk_seed, SEED_BYTES);
 
-    //PQCLEAN_HQC128_CLEAN_shake_prng(pk_seed, SEED_BYTES);
     randombytes(pk_seed, SEED_BYTES);
     PQCLEAN_HQC128_CLEAN_seedexpander_init(&pk_seedexpander, pk_seed, SEED_BYTES);
 
@@ -74,7 +71,7 @@ void PQCLEAN_HQC128_CLEAN_hqc_pke_keygen(unsigned char *pk, unsigned char *sk) {
  * @param[in] theta Seed used to derive randomness required for encryption
  * @param[in] pk String containing the public key
  */
-void PQCLEAN_HQC128_CLEAN_hqc_pke_encrypt(uint64_t *u, uint64_t *v, uint8_t *m, unsigned char *theta, const unsigned char *pk) {
+void PQCLEAN_HQC128_CLEAN_hqc_pke_encrypt(uint64_t *u, uint64_t *v, uint8_t *m, uint8_t *theta, const uint8_t *pk) {
     seedexpander_state seedexpander;
     uint64_t h[VEC_N_SIZE_64] = {0};
     uint64_t s[VEC_N_SIZE_64] = {0};
